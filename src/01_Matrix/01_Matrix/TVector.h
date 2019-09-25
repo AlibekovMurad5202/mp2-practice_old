@@ -1,70 +1,182 @@
 #ifndef __TVECTOR_H__
 #define __TVECTOR_H__
 
+#include <cmath>
+#include <iostream>
+#include "MyExceptions.h"
+
 template<typename ValType>
 class TVector
 {
-    protected:
-        int size;
-        int startIndex;
-        ValType* elems;
+  protected:
+    int size;
+    int startIndex;
+    ValType* elems;
+  
+  public:
+    TVector(int size = 10, int startIndex = 0);
+    TVector(const TVector<ValType>& _tvector);
+    ~TVector();
 
-    public:
-        TVector(int _size = 10, int _startIndex = 0);
-        TVector(const TVector& _tvector);
-        ~TVector();
-        
-        int getSize() const;
-        int getStartIndex() const;
+    bool operator==(const TVector<ValType>& _tvector) const;
+    bool operator!=(const TVector<ValType>& _tvector) const;
 
-        ValType Length() const;
+    TVector<ValType>& operator=(const TVector<ValType>& _tvector);
+    TVector<ValType> operator+(ValType _value);
+    TVector<ValType> operator-(ValType _value);
+    TVector<ValType> operator*(ValType _value);
+    TVector<ValType> operator+(const TVector<ValType>& _tvector);
+    TVector<ValType> operator-(const TVector<ValType>& _tvector);
+    ValType operator*(const TVector<ValType>& _tvector);
 
-        bool operator== (const TVector& _tvector) const;
-        bool operator!= (const TVector& _tvector) const;
-        TVector operator+ (ValType _value);
-        TVector operator- (ValType _value);
-        TVector operator* (ValType _value);
-        TVector operator+ (const TVector& _tvector);
-        Tvector operator- (const Tvector& _tvector);
-        ValType operator* (const TVector& _tvector);
-        TVector& operator= (const TVector& _tvector);
-        ValType& operator[] (int index);
-        friend std::ostream& operator<< (std::ostream& os, const TVector& _tvector);
-        friend std::istream& operator>> (std::istream& is, TVector& _tvector);
+    ValType& operator[](int index);
+    const ValType& operator[](int index) const;
+
+    int getStartIndex() const;
+    int getSize() const;
+    double length() const;
+
+    friend std::ostream& operator<<(std::ostream& out, const TVector<ValType>& _vector);
+    friend std::istream& operator>>(std::istream& in, TVector<ValType>& _vector);
 };
 
-//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//
 
 template<typename ValType>
-TVector<ValType>::TVector(int _size = 10, int _startIndex = 0)
+TVector<ValType>::TVector(int _size, int _startIndex) 
+  : size(_size), startIndex(_startIndex)
 {
-    size = _size;
-    startIndex = startIndex;
-    elems = new ValType[size];
+  //if (size == 0) throw VectorInvalidSize();
+  elems = new ValueType[size];
 }
 
 template<typename ValType>
 TVector<ValType>::TVector(const TVector<ValType>& _tvector)
+  : size(_tvector.size), startIndex(_tvector.startIndex)
 {
-    if (this == &_tvector)
-        return;
-    size = _tvector.getSize();
-    startIndex = _tvector.getStartIndex();
-    elems = new ValType[size];
-    for (int i = 0; i < size; i++)
-        elems[i] = _tvector[i];
+  elems = new ValType[size];
+  memcpy(elems, _tvector.elems, size * sizeof(ValType));
 }
 
 template<typename ValType>
 TVector<ValType>::~TVector()
 {
+  if (size > 0)
     delete[] elems;
 }
 
 template<typename ValType>
-int TVector<ValType>::getSize() const
+bool TVector<ValType>::operator==(const TVector<ValType>& _tvector) const
 {
-    return size;
+  if (size != _tvector.size)
+    return false;
+  for (int i = 0; i < size; i++)
+    if (elems[i] != _tvector.elems[i])
+      return false;
+  return true;
+}
+
+template<typename ValType>
+bool TVector<ValType>::operator!=(const TVector<ValType>& _tvector) const
+{
+  if (size != _tvector.size)                 //return !(*this == _tvector);
+    return true;
+  for (int i = 0; i < size; i++)
+    if (elems[i] != _tvector.elems[i])
+      return true;
+  return false;
+}
+
+template<typename ValType>
+TVector<ValType>& TVector<ValType>::operator=(const TVector& _tvector)
+{
+  if (this == &_tvector)
+    return *this;
+  if (size != _tvector.size)
+  {
+    delete[] elems;
+    elems = new ValueType[_tvector.size];
+  }
+  size = _tvector.size;
+  startIndex = _tvector.startIndex;
+  memcpy(elems, _tvector.elems, size * sizeof(ValueType));
+  return *this;
+}
+
+template<typename ValType>
+TVector<ValType> TVector<ValType>::operator+(ValType _value)
+{
+  TVector<ValType> result(*this);
+  for (int i = 0; i < size; i++)
+    result.elems[i] += _value;
+  return result;
+}
+
+template<typename ValType>
+TVector<ValType> TVector<ValType>::operator-(ValType _value)
+{
+  TVector<ValType> result(*this);
+  for (int i = 0; i < size; i++)
+    result.elems[i] -= _value;
+  return result;
+}
+
+template<typename ValType>
+TVector<ValType> TVector<ValType>::operator*(ValType _value)
+{
+  TVector<ValType> result(*this);
+  for (int i = 0; i < size; i++)
+    result.elems[i] *= _value;
+  return result;
+}
+
+template<typename ValType>
+TVector<ValType> TVector<ValType>::operator+(const TVector<ValType>& _tvector)
+{
+  if (size != _tvector.size)
+    throw VectorDifferentSizes();
+  TVector<ValType> result(*this);
+  for (int i = 0; i < size; i++)
+    result.elems[i] = result.elems[i] + _tvector.elems[i];
+  return result;
+}
+
+template<typename ValType>
+TVector<ValType> TVector<ValType>::operator-(const TVector<ValType>& _tvector)
+{
+  if (size != _tvector.size)
+    throw VectorDifferentSizes();
+  TVector<ValType> result(*this);
+  for (int i = 0; i < size; i++)
+    result.elems[i] = result.elems[i] - _tvector.elems[i];
+  return result;
+}
+
+template<typename ValType>
+ValType TVector<ValType>::operator*(const TVector<ValType>& _tvector)
+{
+  if (size != _tvector.size)
+    throw VectorDifferentSizes();
+  ValType scalarProduct(0);
+  for (int i = 0; i < size; i++)
+    scalarProduct += elems[i] * _tvector.elems[i];
+  return scalarProduct;
+}
+
+template<typename ValType>
+ValType& TVector<ValType>::operator[](int index)
+{
+  if (index - startIndex >= size)
+    throw std::out_of_range("AAAAAAAA!");
+  return elements[index - startIndex];
+}
+
+template<typename ValType>
+const ValType& TVector<ValType>::operator[](int index) const
+{
+  if (index - startIndex >= size)
+    throw std::out_of_range("AAAAAAAA!");
+  return elems[index - startIndex];
 }
 
 template<typename ValType>
@@ -74,101 +186,41 @@ int TVector<ValType>::getStartIndex() const
 }
 
 template<typename ValType>
-bool TVector<ValType>::operator== (const TVector<ValType>& _tvector) const
+int TVector<ValType>::getSize() const
 {
-    if (_tvector.getSize() != size)
-        return false;
-    for (int i = 0; i < size; i++)
-        if (_tvector[i] != elems[i])
-            return false;
-    return true;
+    return size;
 }
 
 template<typename ValType>
-bool TVector<ValType>::operator!= (const TVector<ValType>& _tvector) const
+double TVector<ValType>::length() const
 {
-    return !(*this == _tvector);
+  ValType scalarProduct(0);
+  for (int i = 0; i < size; i++)
+    scalarProduct += elems[i] * elems[i];
+  return sqrt(scalarProduct);               //return sqrt((*this) * (*this))
 }
 
 template<typename ValType>
-TVector<ValType> TVector<ValType>::operator+ (Valtype _value)
+std::ostream & operator<<(std::ostream & out, const TVector<ValType> & _vector)
 {
-    TVector<Valtype> tmp(*this);
-    for (int i = 0; i < size; i++)
-        tmp[i] += _value;
-    return tmp;
+  out << "[ ";
+  if (_vector.size == 0)
+    return out << ']';
+  for (int i = 0; i < _vector.startIndex; i++)
+    out << std::setw(5) << std::setprecision(2) << std::right << ValType(0) << ' ';
+  for (int i = 0; i < _vector.size; i++)
+    out << std::setw(5) << std::setprecision(2) << std::right << _vector.elems[i] << ' ';
+  return out << ']';
 }
 
 template<typename ValType>
-TVector<ValType> TVector<ValType>::operator- (Valtype _value)
+std::istream & operator>>(std::istream & in, TVector<ValType> & _vector)
 {
-    TVector<Valtype> tmp(*this);
-    for (int i = 0; i < size; i++)
-        tmp[i] -= _value;
-    return tmp;
+  if (_vector.size == 0)
+    return in;
+  for (int i = 0; i < _vector.size; i++)
+    in >> vector.elems[i];
+  return in;
 }
 
-template<typename ValType>
-TVector<ValType> TVector<ValType>::operator* (Valtype _value)
-{
-    TVector<Valtype> tmp(*this);
-    for (int i = 0; i < size; i++)
-        tmp[i] *= _value;
-    return tmp;
-}
-
-template<typename ValType>
-TVector<ValType> TVector<ValType>::operator+ (const TVector<ValType>& _tvector) const
-{
-    if (size != _tvector.getSize())
-        ; // exception
-
-    TVector<Valtype> tmp(*this);
-    for (int i = 0; i < size; i++)
-        tmp[i] += _tvector[i];
-    return tmp;
-}
-
-template<typename ValType>
-TVector<ValType> TVector<ValType>::operator- (const TVector<ValType>& _tvector) const
-{
-    if (size != _tvector.getSize())
-        ; // exception
-
-    TVector<Valtype> tmp(*this);
-    for (int i = 0; i < size; i++)
-        tmp[i] -= _tvector[i];
-    return tmp;
-}
-
-template<typename ValType>
-ValType TVector<ValType>::operator* (const TVector<ValType>& _tvector) const
-{
-    if (size != _tvector.getSize())
-        ; // exception
-    ValType scalarProduct = 0;
-    for (int i = 0; i < size; i++)
-        scalarProduct += elems[i] * _tvector[i];
-    return scalarProduct;
-}
-
-template<typename ValType>
-TVector<ValType> TVector<ValType>::operator= (const TVector<ValType>& _tvector)
-{
-    if (this == &_tvector)
-        return *this;
-    delete[] elems;
-    size = _tvector.getsize();
-    elems = new ValType[size];
-    for (int i = 0; i < size; i++)
-        elems[i] = _tvector[i];
-    return *this;
-}
-
-template<typename ValType>
-ValType& TVector<ValType>::operator[] (const TVector<ValType>& _tvector)
-{
-
-}
-
-#endif
+#endif // !__TVECTOR_H__
