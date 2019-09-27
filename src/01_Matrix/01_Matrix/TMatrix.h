@@ -41,7 +41,7 @@ public:
   {
     if (_tmatrix.size == 0)
       return in;
-    for (int i = 0; i < _tmatrix.size - 1; i++)
+    for (int i = 0; i < _tmatrix.size; i++)
       in >> _tmatrix.elems[i];
     return in;
   }
