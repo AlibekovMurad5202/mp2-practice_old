@@ -115,6 +115,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="TMatrix.h" />
     <ClInclude Include="MyExceptions.h" />
     <ClInclude Include="TVector.h" />
   </ItemGroup>
