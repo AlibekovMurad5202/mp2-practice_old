@@ -7,7 +7,7 @@ template<typename ValType>
 class TMatrix : public TVector<TVector<ValType> >
 {
 public:
-  explicit TMatrix(int _size = 7);
+  explicit TMatrix(int _size = 5);
   TMatrix(const TMatrix& _tmatrix);
   TMatrix(const TVector<TVector<ValType> >& _matrix);
   ~TMatrix();
@@ -32,7 +32,7 @@ public:
     if (_tmatrix.size == 0)
       return out;
     for (int i = 0; i < _tmatrix.size - 1; i++)
-      out << _tmatrix.elems[i] << '\n';
+      out << _tmatrix.elems[i] << std::endl;
     out << _tmatrix.elems[_tmatrix.size - 1];
     return out;
   }
@@ -42,12 +42,15 @@ public:
     if (_tmatrix.size == 0)
       return in;
     for (int i = 0; i < _tmatrix.size; i++)
+    {
+      std::cout << "Enter row #" << i + 1 << ": " << std::endl;
       in >> _tmatrix.elems[i];
+    }
     return in;
   }
 };
 
-//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//
 
 template<typename ValType>
 TMatrix<ValType>::TMatrix(int _size) 
@@ -174,17 +177,15 @@ TMatrix<ValType> TMatrix<ValType>::operator*(const TMatrix& _tmatrix)
     MatrixExceptionDifferentDimensions e(__LINE__, __FILE__);
     throw e;
   }
-  TMatrix<ValType> result(*this);
+  TMatrix<ValType> result(this->size);
   for (int i = 0; i < this->size; i++)
-  {
-    for (int j = i; i < this->size; i++)
+    for (int j = i; j < this->size; j++)
     {
-      for (int k = 0; k < this->size; i++)
-      {
-        result[i][j] += this->elems[i][k] * _tmatrix[k][j];
-      }
+      ValType dotProduct = ValType(0);
+      for (int k = i; k <= j; k++)
+        dotProduct += this->elems[i][k] * _tmatrix[k][j];
+      result[i][j] = dotProduct;
     }
-  }
   return result;
 }
 
@@ -210,6 +211,6 @@ ValType TMatrix<ValType>::determinant()
   for (int i = 0; i < this->size; i++)
     result *= this->elems[i][i];
   return result;
-}
+};
 
 #endif // !__MATRIX_H__

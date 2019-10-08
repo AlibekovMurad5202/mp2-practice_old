@@ -15,7 +15,7 @@ class TVector
     ValType* elems;
   
   public:
-    explicit TVector(int size = 7, int startIndex = 0);
+    explicit TVector(int size = 5, int startIndex = 0);
     TVector(const TVector<ValType>& _tvector);
     ~TVector();
 
@@ -60,7 +60,7 @@ class TVector
     }
 };
 
-//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//
 
 template<typename ValType>
 TVector<ValType>::TVector(int _size, int _startIndex) 
@@ -74,7 +74,8 @@ TVector<ValType>::TVector(const TVector<ValType>& _tvector)
   : size(_tvector.size), startIndex(_tvector.startIndex)
 {
   elems = new ValType[size];
-  memcpy(elems, _tvector.elems, size * sizeof(ValType));
+  for (int i = 0; i < size; i++)
+    elems[i] = _tvector.elems[i];
 }
 
 template<typename ValType>
@@ -86,7 +87,7 @@ TVector<ValType>::~TVector()
 template<typename ValType>
 bool TVector<ValType>::operator==(const TVector<ValType>& _tvector) const
 {
-  if (size != _tvector.size)
+  if ((size != _tvector.size) || (startIndex != _tvector.startIndex))
     return false;
   for (int i = 0; i < size; i++)
     if (elems[i] != _tvector.elems[i])
@@ -112,7 +113,8 @@ TVector<ValType>& TVector<ValType>::operator=(const TVector& _tvector)
     elems = new ValType[size];
   }
   startIndex = _tvector.startIndex;
-  memcpy(elems, _tvector.elems, size * sizeof(ValType));
+  for (int i = 0; i < size; i++)
+      elems[i] = _tvector.elems[i];
   return *this;
 }
 
@@ -222,6 +224,6 @@ const ValType& TVector<ValType>::operator[](int _index) const
     throw e;
   }
   return elems[_index - startIndex];
-}
+};
 
 #endif // !__TVECTOR_H__
