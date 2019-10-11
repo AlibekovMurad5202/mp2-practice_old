@@ -105,4 +105,30 @@ MatrixExceptionDifferentDimensions::MatrixExceptionDifferentDimensions(int _line
 MatrixExceptionDifferentDimensions::~MatrixExceptionDifferentDimensions()
 {
   line = -1;
+}
+
+VectorExceptionNotPositiveDimension::VectorExceptionNotPositiveDimension()
+{
+  str_what = "Vector has not positive dimension!";
+  line = -1;
+  file = 0;
+}
+
+VectorExceptionNotPositiveDimension::VectorExceptionNotPositiveDimension(const VectorExceptionNotPositiveDimension& _exception)
+{
+  str_what = _exception.what();
+  line = _exception.errorLine();
+  file = _exception.errorFile();
+}
+
+VectorExceptionNotPositiveDimension::VectorExceptionNotPositiveDimension(int _line, const char* _file)
+{
+  str_what = "Vector has not positive dimension!";
+  line = _line;
+  file = _file;
+}
+
+VectorExceptionNotPositiveDimension::~VectorExceptionNotPositiveDimension()
+{
+  line = -1;
 };

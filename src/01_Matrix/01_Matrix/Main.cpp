@@ -6,6 +6,11 @@ int main()
 
   std::cout << "Enter size of matrices: ";
   std::cin >> size;
+  do
+  {
+    std::cout << "Please enter positive integer!" << std::endl;
+    std::cin >> size;
+  } while (size <= 0);
 
   TVector<double> tv(size);
   double tmp;
@@ -98,7 +103,7 @@ int main()
 
   try
   {
-    tm1[73];
+    tm1[tm1.getSize() + 12];
   }
   catch (VectorExceptionOutOfRange const& e)
   {
@@ -106,6 +111,28 @@ int main()
     std::cout << "errorLine: " << e.errorLine() << std::endl;
     std::cout << "errorFile: " << e.errorFile() << std::endl;
   }
-  
+
+  try
+  {
+    TMatrix<double> tm7(0);
+  }
+  catch (MyException const& e)
+  {
+    std::cout << std::endl << e.what() << std::endl;
+    std::cout << "errorLine: " << e.errorLine() << std::endl;
+    std::cout << "errorFile: " << e.errorFile() << std::endl;
+  }
+
+  try
+  {
+    TVector<TVector<double> > ttv2(0);
+  }
+  catch (VectorExceptionNotPositiveDimension const& e)
+  {
+    std::cout << std::endl << e.what() << std::endl;
+    std::cout << "errorLine: " << e.errorLine() << std::endl;
+    std::cout << "errorFile: " << e.errorFile() << std::endl;
+  }
+
   system("pause");
 }

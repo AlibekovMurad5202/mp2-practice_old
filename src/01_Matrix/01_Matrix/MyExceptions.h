@@ -50,4 +50,13 @@ public:
   ~MatrixExceptionDifferentDimensions();
 };
 
+class VectorExceptionNotPositiveDimension : public MyException
+{
+public:
+  VectorExceptionNotPositiveDimension();
+  VectorExceptionNotPositiveDimension(const VectorExceptionNotPositiveDimension& _exception);
+  VectorExceptionNotPositiveDimension(int _line, const char* _file);
+  ~VectorExceptionNotPositiveDimension();
+};
+
 #endif // !__MY_EXCEPTIONS_H__

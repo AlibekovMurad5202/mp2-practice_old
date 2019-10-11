@@ -66,6 +66,11 @@ template<typename ValType>
 TVector<ValType>::TVector(int _size, int _startIndex) 
   : size(_size), startIndex(_startIndex)
 {
+  if (size <= 0) 
+  {
+    VectorExceptionNotPositiveDimension e(__LINE__, __FILE__);
+    throw e;
+  }
   elems = new ValType[size];
 }
 
@@ -73,6 +78,11 @@ template<typename ValType>
 TVector<ValType>::TVector(const TVector<ValType>& _tvector)
   : size(_tvector.size), startIndex(_tvector.startIndex)
 {
+  if (size <= 0)
+  {
+    VectorExceptionNotPositiveDimension e(__LINE__, __FILE__);
+    throw e;
+  }
   elems = new ValType[size];
   for (int i = 0; i < size; i++)
     elems[i] = _tvector.elems[i];
@@ -148,7 +158,7 @@ TVector<ValType> TVector<ValType>::operator*(ValType _value)
 template<typename ValType>
 TVector<ValType> TVector<ValType>::operator+(const TVector<ValType>& _tvector)
 {
-  if (size != _tvector.size)
+  if ((size != _tvector.size) || (startIndex != _tvector.startIndex))
   {
     VectorExceptionDifferentDimensions e(__LINE__, __FILE__);
     throw e;
@@ -162,7 +172,7 @@ TVector<ValType> TVector<ValType>::operator+(const TVector<ValType>& _tvector)
 template<typename ValType>
 TVector<ValType> TVector<ValType>::operator-(const TVector<ValType>& _tvector)
 {
-  if (size != _tvector.size)
+  if ((size != _tvector.size) || (startIndex != _tvector.startIndex))
   {
     VectorExceptionDifferentDimensions e(__LINE__, __FILE__);
     throw e;
@@ -176,7 +186,7 @@ TVector<ValType> TVector<ValType>::operator-(const TVector<ValType>& _tvector)
 template<typename ValType>
 ValType TVector<ValType>::operator*(const TVector<ValType>& _tvector)
 {
-  if (size != _tvector.size)
+  if ((size != _tvector.size) || (startIndex != _tvector.startIndex))
   {
     VectorExceptionDifferentDimensions e(__LINE__, __FILE__);
     throw e;

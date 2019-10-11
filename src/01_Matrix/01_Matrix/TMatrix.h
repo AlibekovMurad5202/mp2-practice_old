@@ -62,9 +62,8 @@ TMatrix<ValType>::TMatrix(int _size)
 
 template<typename ValType>
 TMatrix<ValType>::TMatrix(const TMatrix<ValType>& _tmatrix)
+  : TVector<TVector<ValType> >(_tmatrix.getSize())
 {
-  this->size = _tmatrix.size;
-  this->elems = new TVector<ValType>[this->size];
   for (int i = 0; i < _tmatrix.size; i++)
     this->elems[i] = _tmatrix.elems[i];
 }
