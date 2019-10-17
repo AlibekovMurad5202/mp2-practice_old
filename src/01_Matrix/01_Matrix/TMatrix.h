@@ -25,7 +25,7 @@ public:
   
   TVector<ValType> operator*(const TVector<ValType>& _tvector);
 
-  ValType determinant();
+  ValType determinant() const;
 
   friend std::ostream& operator<<(std::ostream& out, const TMatrix<ValType>& _tmatrix)
   {
@@ -62,26 +62,14 @@ TMatrix<ValType>::TMatrix(int _size)
 
 template<typename ValType>
 TMatrix<ValType>::TMatrix(const TMatrix<ValType>& _tmatrix)
-  : TVector<TVector<ValType> >(_tmatrix.getSize())
-{
-  for (int i = 0; i < _tmatrix.size; i++)
-    this->elems[i] = _tmatrix.elems[i];
-}
+  : TVector<TVector<ValType> >(_tmatrix) {}
 
 template<typename ValType>
 inline TMatrix<ValType>::~TMatrix() {}
 
 template<typename ValType>
 TMatrix<ValType>::TMatrix(const TVector<TVector<ValType> >& _matrix) 
-  : TVector<TVector<ValType> >(_matrix.getSize())
-{
-  for (int i = 0; i < this->size; i++)
-  {
-    this->elems[i] = TVector<ValType>(this->size - i, i);
-    for (int j = i; j < this->size; j++)
-      this->elems[i][j] = _matrix[i][j];
-  }
-}
+  : TVector<TVector<ValType> >(_matrix) {}
 
 template<typename ValueType>
 bool TMatrix<ValueType>::operator==(const TMatrix<ValueType>& _tmatrix) const
@@ -203,7 +191,7 @@ TVector<ValType> TMatrix<ValType>::operator*(const TVector<ValType>& _tvector)
 }
 
 template<typename ValType>
-ValType TMatrix<ValType>::determinant()
+ValType TMatrix<ValType>::determinant() const
 {
   ValType result;
   result = ValType(1);

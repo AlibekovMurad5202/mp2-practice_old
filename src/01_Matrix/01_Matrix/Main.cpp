@@ -6,18 +6,25 @@ int main()
 
   std::cout << "Enter size of matrices: ";
   std::cin >> size;
-  do
+  while (size <= 0)
   {
     std::cout << "Please enter positive integer!" << std::endl;
     std::cin >> size;
-  } while (size <= 0);
+  }
 
   TVector<double> tv(size);
   double tmp;
+
   TVector<TVector<double> > ttv(size);
-  for (int i = 0; i < size; i++)
-    for (int j = i; j < size; j++)
-      ttv[i][j] = 1.;
+  {
+    for (int i = 0; i < size; i++)
+    {
+      TVector<double> temp(size - i, i);
+      for (int j = i; j < size; j++)
+        temp[j] = 1.;
+      ttv[i] = temp;
+    } 
+  }
   
   TMatrix<double> tm1(size), tm2(size);
   TMatrix<double> tm3, tm4;

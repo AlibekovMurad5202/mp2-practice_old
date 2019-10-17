@@ -43,9 +43,9 @@ class TVector
       if (_vector.size != 0)
       {
         for (int i = 0; i < _vector.startIndex; i++)
-          out << std::setw(5) << std::setprecision(2) << std::right << ValType(0) << ' ';
+          out << std::setw(8) << std::setprecision(2) << std::right << ValType(0) << ' ';
         for (int i = 0; i < _vector.size; i++)
-          out << std::setw(5) << std::setprecision(2) << std::right << _vector.elems[i] << ' ';
+          out << std::setw(8) << std::setprecision(2) << std::right << _vector.elems[i] << ' ';
       }
       out << ']';
       return out;
