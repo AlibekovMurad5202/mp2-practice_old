@@ -161,18 +161,23 @@ double Converter::Calculate(const std::string & _postfixForm, const double value
 
   for (int i = 0, j = 0; i < postfixForm.length(); i++)
   {
-    if (postfixForm[i] != ' ')
+    std::cout << std::endl << "Iteration: #" << i << std::endl;
+    
+    if (postfixForm[i] != ' ')           // |a b + c + |
     {
-      tmp.push_back(postfixForm[i]);
+      //tmp.push_back(postfixForm[i]);
     }
     else
     {
+      tmp.push_back(postfixForm[i - 1]);
       if ((tmp != "*") && (tmp != "/") && (tmp != "+") && (tmp != "-"))
       {
         if (!isNumber(tmp))
           result.Push(values[j++]);
         else
+        {
           result.Push(stod(tmp, 0));
+        }
         tmp.clear();
       }
       else if (tmp == "*")
@@ -205,6 +210,7 @@ double Converter::Calculate(const std::string & _postfixForm, const double value
         result.Push(a - b);
       }
     }
+      //std::cout << "/" << tmp << "/";
     tmp.clear();
   }
   return result.Top();

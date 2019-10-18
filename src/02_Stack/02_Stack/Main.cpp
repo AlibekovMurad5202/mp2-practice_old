@@ -4,8 +4,8 @@
 
 int main()
 {
-  std::string buffer = "a+b+c";
-  //std::getline(std::cin, buffer);
+  std::string buffer;// = "a+b+c";
+  std::getline(std::cin, buffer);
 
   try
   {
@@ -30,7 +30,7 @@ int main()
     std::cout << "errorLine: " << e.errorLine() << std::endl;
     std::cout << "errorFile: " << e.errorFile() << std::endl;
   }
-
+  
 
   system("pause");
   return 0;
