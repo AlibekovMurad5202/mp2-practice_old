@@ -1,21 +1,32 @@
 #include "Converter.h"
+#include "string"
+#include "iostream"
 
-std::string Coverter::ConvertToPostfixForm(const std::string & _expression)
+std::string Converter::postfixForm;
+int Converter::countOfOperands;
+int Converter::countOfOperators;
+
+std::string Converter::ConvertToPostfixForm(const std::string & _expression)
 {
   std::string buffer;
+  int lengthOfExpression = _expression.length();
   int numberOfOperators = 0;
   int numberOfOperands = 0;
   int numberOfLeftBrackets = 0;
   int numberOfRightBrackets = 0;
+  char lastSymbol = 0;
 
-  for (int i = 0; i < _expression.size(); i++)
+  Stack<char> operators(lengthOfExpression);
+  Stack<std::string> operands(lengthOfExpression);
+
+  for (int i = 0; i < lengthOfExpression; i++)
   {
     if (buffer.length() != 0)
     {
-      if ((_expression[i] == '+') || (_expression[i] == '-') 
-       || (_expression[i] == '*') || (_expression[i] == '/') 
-       || (_expression[i] == '(') || (_expression[i] == ')') 
-       || (_expression[i] == ' '))
+      if ((_expression[i] == '+') || (_expression[i] == '-')
+        || (_expression[i] == '*') || (_expression[i] == '/')
+        || (_expression[i] == '(') || (_expression[i] == ')')
+        || (_expression[i] == ' '))
       {
         numberOfOperands++;
         operands.Push(buffer);
@@ -23,28 +34,55 @@ std::string Coverter::ConvertToPostfixForm(const std::string & _expression)
       }
     }
 
-    if (_expression[i] == ' ');
-    else if ((_expression[i] != '+') && (_expression[i] != '-') 
-      && (_expression[i] != '*') && (_expression[i] != '/') 
+    if (_expression[i] == ' ') ;
+    else if ((_expression[i] != '+') && (_expression[i] != '-')
+      && (_expression[i] != '*') && (_expression[i] != '/')
       && (_expression[i] != '(') && (_expression[i] != ')'))
     {
+      if (numberOfOperands == numberOfOperators + 1)
+      {
+        ExceptionWrongExpression ex(__LINE__, __FILE__);
+        throw ex;
+      }
+
       buffer.push_back(_expression[i]);
+      if (i == (lengthOfExpression - 1))
+      {
+        numberOfOperands++;
+        operands.Push(buffer);
+        buffer.clear();
+      }
     }
     else if (_expression[i] == '(')
     {
+      if ((lastSymbol != '+') && (lastSymbol != '-')
+        && (lastSymbol != '*') && (lastSymbol != '/')
+        && (lastSymbol != ' '))
+      {
+        ExceptionWrongExpression ex(__LINE__, __FILE__);
+        throw ex;
+      }
       numberOfLeftBrackets++;
       operators.Push(_expression[i]);
     }
     else if (_expression[i] == ')')
     {
+      if ((lastSymbol == '+') || (lastSymbol == '-')
+       || (lastSymbol == '*') || (lastSymbol == '/')
+       || (lastSymbol == '(') || (lastSymbol == ')'))
+      {
+        ExceptionWrongExpression ex(__LINE__, __FILE__);
+        throw ex;
+      }
       numberOfRightBrackets++;
       while (operators.Top() != '(')
       {
-        std::string temp;
+        std::string tmp;
         try
         {
-          temp.push_back(operators.Pop());
-          operands.Push(temp);
+          tmp.push_back(operators.Top());
+          operators.Pop();
+          operands.Push(tmp);
         }
         catch (ExceptionEmptyStack const& e)
         {
@@ -66,23 +104,20 @@ std::string Coverter::ConvertToPostfixForm(const std::string & _expression)
     }
     else
     {
-      while ((!operators.IsEmpty()) && (operators.Top() != '(') 
+      while ((!operators.IsEmpty()) && (operators.Top() != '(')
         && (getPriorityOfOperator(_expression[i]) <= getPriorityOfOperator(operators.Top())))
       {
-        std::string temp;
-        temp.push_back(operators.Pop());
-        operands.Push(temp);
+        std::string tmp;
+        tmp.push_back(operators.Top());
+        operators.Pop();
+        operands.Push(tmp);
       }
       operators.Push(_expression[i]);
       numberOfOperators++;
     }
-  }
 
-  if (buffer.length() != 0)
-  {
-    operands.Push(buffer);
-    buffer.clear();
-    numberOfOperands++;
+    if (_expression[i] != ' ')
+      lastSymbol = _expression[i];
   }
 
   if ((numberOfOperands != numberOfOperators + 1)
@@ -94,50 +129,61 @@ std::string Coverter::ConvertToPostfixForm(const std::string & _expression)
 
   while (!operators.IsEmpty())
   {
-    std::string temp;
-    temp.push_back(operators.Pop());
-    operands.Push(temp);
+    std::string tmp;
+    tmp.push_back(operators.Top());
+    operators.Pop();
+    operands.Push(tmp);
   }
 
-  std::string postfixForm;
+  Stack<std::string> reverseStackOfOperands(lengthOfExpression);
+  for (; !operands.IsEmpty(); operands.Pop())
+    reverseStackOfOperands.Push(operands.Top());
+
   int startPosition = 0;
-  while (!operands.IsEmpty())
+  while (!reverseStackOfOperands.IsEmpty())
   {
     startPosition = postfixForm.length();
-    postfixForm.insert(startPosition, operands.Pop());
+    postfixForm.insert(startPosition, reverseStackOfOperands.Top());
+    reverseStackOfOperands.Pop();
+    buffer = ' ';
+    postfixForm.insert(postfixForm.length(), buffer);
   }
 
+  countOfOperators = numberOfOperators;
+  countOfOperands = numberOfOperands;
   return postfixForm;
 }
 
-double Coverter::Calculate(const std::string & _postfixForm, const double values[])
+double Converter::Calculate(const std::string & _postfixForm, const double values[])
 {
   Stack<double> result(postfixForm.length());
-  std::string temp;
-  int j = 0;
+  std::string tmp;
 
-  for (int i = 0; i < postfixForm.size(); i++)
+  for (int i = 0, j = 0; i < postfixForm.length(); i++)
   {
     if (postfixForm[i] != ' ')
     {
-      temp.push_back(postfixForm[i]);
+      tmp.push_back(postfixForm[i]);
     }
     else
     {
-      if ((temp != "*") && (temp != "/") && (temp != "+") && (temp != "-"))
+      if ((tmp != "*") && (tmp != "/") && (tmp != "+") && (tmp != "-"))
       {
-        result.Push(values[j++]);
+        if (!isNumber(tmp))
+          result.Push(values[j++]);
+        else
+          result.Push(stod(tmp, 0));
       }
-      else if (temp == "*")
+      else if (tmp == "*")
       {
-        double b = result.Pop();
-        double a = result.Pop();
+        double b = result.Top(); result.Pop();
+        double a = result.Top(); result.Pop();
         result.Push(a * b);
       }
-      else if (temp == "/")
+      else if (tmp == "/")
       {
-        double b = result.Pop();
-        double a = result.Pop();
+        double b = result.Top(); result.Pop();
+        double a = result.Top(); result.Pop();
         if (b == 0) 
         {
           ExceptionDivisionByZero e(__LINE__, __FILE__);
@@ -145,28 +191,33 @@ double Coverter::Calculate(const std::string & _postfixForm, const double values
         }
         result.Push(a / b);
       }
-      else if (temp == "+")
+      else if (tmp == "+")
       {
-        double b = result.Pop();
-        double a = result.Pop();
+        double b = result.Top(); result.Pop();
+        double a = result.Top(); result.Pop();
         result.Push(a + b);
       }
-      else if (temp == "-")
+      else if (tmp == "-")
       {
-        double b = result.Pop();
-        double a = result.Pop();
+        double b = result.Top(); result.Pop();
+        double a = result.Top(); result.Pop();
         result.Push(a - b);
       }
-      temp.clear();
     }
+    tmp.clear();
   }
   return result.Top();
 }
 
-int Coverter::getPriorityOfOperator(const char _operator) const 
+int Converter::getPriorityOfOperator(const char _operator)
 {
   if ((_operator == '*') || (_operator == '/')) return 3;
   if ((_operator == '+') || (_operator == '-')) return 2;
   if (_operator == ')') return 1;
   return 0;
+}
+
+bool Converter::isNumber(const std::string& _str)
+{
+  return ((!_str.empty()) && (_str.find_first_not_of("0123456789") == _str.npos));
 }

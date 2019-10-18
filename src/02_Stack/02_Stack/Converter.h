@@ -5,17 +5,22 @@
 #include "stdlib.h"
 #include "Stack.h"
 
-static class Coverter
+static class Converter
 {
 protected:
-  Stack<char> operators;          //first stack
-  Stack<std::string> operands;    //second stack
-  std::string postfixForm;
+  static int countOfOperands;
+  static int countOfOperators;
+  static std::string postfixForm;
+  //static Stack<char> operators;
+  //static Stack<std::string> operands;
 
 public:
-  std::string ConvertToPostfixForm(const std::string& _expression);
-  double Calculate(const std::string& _postfixForm, const double values[]);
-  int getPriorityOfOperator(const char _operator) const;
+  static std::string ConvertToPostfixForm(const std::string& _expression);
+  static double Calculate(const std::string& _postfixForm, const double values[]);
+  static int getPriorityOfOperator(const char _operator);
+  static bool isNumber(const std::string& _str);
 };
+
+//std::string Converter::postfixForm;// = "  ";
 
 #endif // !__CONVERTER__H__
