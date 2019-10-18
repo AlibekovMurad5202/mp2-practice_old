@@ -173,6 +173,7 @@ double Converter::Calculate(const std::string & _postfixForm, const double value
           result.Push(values[j++]);
         else
           result.Push(stod(tmp, 0));
+        tmp.clear();
       }
       else if (tmp == "*")
       {

@@ -7,7 +7,7 @@
 
 static class Converter
 {
-protected:
+private:
   static int countOfOperands;
   static int countOfOperators;
   static std::string postfixForm;
@@ -18,9 +18,9 @@ public:
   static std::string ConvertToPostfixForm(const std::string& _expression);
   static double Calculate(const std::string& _postfixForm, const double values[]);
   static int getPriorityOfOperator(const char _operator);
+
+private:
   static bool isNumber(const std::string& _str);
 };
-
-//std::string Converter::postfixForm;// = "  ";
 
 #endif // !__CONVERTER__H__
