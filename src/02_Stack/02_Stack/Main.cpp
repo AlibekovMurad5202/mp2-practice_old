@@ -31,7 +31,6 @@ int main()
     std::cout << "errorFile: " << e.errorFile() << std::endl;
   }
 
-  //delete[] d;
 
   system("pause");
   return 0;
