@@ -4,17 +4,22 @@
 
 std::string Converter::postfixForm;
 int Converter::countOfOperands;
-int Converter::countOfOperators;
+std::string *Converter::operands;
+//int Converter::countOfOperators;
 
 std::string Converter::ConvertToPostfixForm(const std::string & _expression)
 {
+  std::string *_operands = new std::string[_expression.length()];
   std::string buffer;
   int lengthOfExpression = _expression.length();
   int numberOfOperators = 0;
   int numberOfOperands = 0;
+  countOfOperands = 0;
   int numberOfLeftBrackets = 0;
   int numberOfRightBrackets = 0;
   char lastSymbol = 0;
+  postfixForm.clear();
+  int indexOfOperand = 0;
 
   Stack<char> operators(lengthOfExpression);
   Stack<std::string> operands(lengthOfExpression);
@@ -30,6 +35,13 @@ std::string Converter::ConvertToPostfixForm(const std::string & _expression)
       {
         numberOfOperands++;
         operands.Push(buffer);
+        {
+          int k = 0;
+          while ((k < indexOfOperand) &&
+            (_operands[k++] != _operands[indexOfOperand])) {};
+          if (k == indexOfOperand)
+            _operands[indexOfOperand++] = buffer;
+        }
         buffer.clear();
       }
     }
@@ -39,7 +51,7 @@ std::string Converter::ConvertToPostfixForm(const std::string & _expression)
       && (_expression[i] != '*') && (_expression[i] != '/')
       && (_expression[i] != '(') && (_expression[i] != ')'))
     {
-      if (numberOfOperands == numberOfOperators + 1)
+      if (numberOfOperands == (numberOfOperators + 1))
       {
         ExceptionWrongExpression ex(__LINE__, __FILE__);
         throw ex;
@@ -50,6 +62,14 @@ std::string Converter::ConvertToPostfixForm(const std::string & _expression)
       {
         numberOfOperands++;
         operands.Push(buffer);
+        {
+          int k = 0;
+          while ((k < indexOfOperand) &&
+            (_operands[k++] != _operands[indexOfOperand])) {
+          };
+          if (k == indexOfOperand)
+            _operands[indexOfOperand++] = buffer;
+        }
         buffer.clear();
       }
     }
@@ -57,7 +77,8 @@ std::string Converter::ConvertToPostfixForm(const std::string & _expression)
     {
       if ((lastSymbol != '+') && (lastSymbol != '-')
         && (lastSymbol != '*') && (lastSymbol != '/')
-        && (lastSymbol != ' '))
+        && (lastSymbol != ' ') && (lastSymbol != '(')
+        && (lastSymbol != 0))
       {
         ExceptionWrongExpression ex(__LINE__, __FILE__);
         throw ex;
@@ -69,7 +90,7 @@ std::string Converter::ConvertToPostfixForm(const std::string & _expression)
     {
       if ((lastSymbol == '+') || (lastSymbol == '-')
        || (lastSymbol == '*') || (lastSymbol == '/')
-       || (lastSymbol == '(') || (lastSymbol == ')'))
+       || (lastSymbol == '('))// || (lastSymbol == ')'))
       {
         ExceptionWrongExpression ex(__LINE__, __FILE__);
         throw ex;
@@ -94,6 +115,11 @@ std::string Converter::ConvertToPostfixForm(const std::string & _expression)
     }
     else if (operators.IsEmpty())
     {
+      if (lastSymbol == 0)
+      {
+        ExceptionWrongExpression ex(__LINE__, __FILE__);
+        throw ex;
+      }
       operators.Push(_expression[i]);
       numberOfOperators++;
     }
@@ -149,15 +175,22 @@ std::string Converter::ConvertToPostfixForm(const std::string & _expression)
     postfixForm.insert(postfixForm.length(), buffer);
   }
 
-  countOfOperators = numberOfOperators;
   countOfOperands = numberOfOperands;
+  {
+    Converter::operands = new std::string[countOfOperands++];
+    for (int i = 0; i < countOfOperands; i++)
+      Converter::operands[i] = _operands[i];
+    delete[] _operands;
+  }
+
   return postfixForm;
 }
 
-double Converter::Calculate(const std::string & _postfixForm, const double values[])
+double Converter::Calculate(const std::string & _postfixForm, const Variables& _var)
 {
   Stack<double> result(postfixForm.length());
   std::string tmp;
+  int value;
 
   for (int i = 0, j = 0; i < postfixForm.length(); i++)
   {
@@ -173,7 +206,12 @@ double Converter::Calculate(const std::string & _postfixForm, const double value
       if ((tmp != "*") && (tmp != "/") && (tmp != "+") && (tmp != "-"))
       {
         if (!isNumber(tmp))
-          result.Push(values[j++]);
+        {
+          int idx = 0;
+          while ((idx < countOfOperands) && (operands[idx++] != tmp));
+
+          result.Push(_var.values[idx]);
+        }
         else
         {
           result.Push(stod(tmp, 0));
@@ -222,6 +260,23 @@ int Converter::getPriorityOfOperator(const char _operator)
   if ((_operator == '+') || (_operator == '-')) return 2;
   if (_operator == ')') return 1;
   return 0;
+}
+
+void Converter::Clear()
+{
+  Converter::countOfOperands = 0;
+  Converter::postfixForm.clear();
+  delete[] operands;
+}
+
+std::string*& Converter::getOperands()
+{
+  return operands;
+}
+
+int Converter::getCountOfOperands()
+{
+  return countOfOperands;
 }
 
 bool Converter::isNumber(const std::string& _str)

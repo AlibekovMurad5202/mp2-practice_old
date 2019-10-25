@@ -1,5 +1,5 @@
-#ifndef __STACK__H__
-#define __STACK__H__
+#ifndef __STACK_H__
+#define __STACK_H__
 
 #include "MyExceptions.h"
 
@@ -117,4 +117,4 @@ Stack<ValType>& Stack<ValType>::operator=(const Stack<ValType>& _tstack)
   return *this;
 };
 
-#endif // !__STACK__H__
+#endif // !__STACK_H__

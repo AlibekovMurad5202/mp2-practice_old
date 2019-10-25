@@ -118,11 +118,13 @@
     <ClCompile Include="Converter.cpp" />
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="MyExceptions.cpp" />
+    <ClCompile Include="Variables.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Converter.h" />
     <ClInclude Include="MyExceptions.h" />
     <ClInclude Include="Stack.h" />
+    <ClInclude Include="Variables.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
