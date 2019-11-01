@@ -151,7 +151,7 @@ std::string Converter::ConvertToPostfixForm(const std::string & _expression)
   {
     ExceptionWrongExpression e(__LINE__, __FILE__);
     throw e;
-  }
+  } 
 
   while (!operators.IsEmpty())
   {
@@ -177,7 +177,7 @@ std::string Converter::ConvertToPostfixForm(const std::string & _expression)
 
   countOfOperands = numberOfOperands;
   {
-    Converter::operands = new std::string[countOfOperands++];
+    Converter::operands = new std::string[countOfOperands];
     for (int i = 0; i < countOfOperands; i++)
       Converter::operands[i] = _operands[i];
     delete[] _operands;
@@ -198,11 +198,11 @@ double Converter::Calculate(const std::string & _postfixForm, const Variables& _
     
     if (postfixForm[i] != ' ')           // |a b + c + |
     {
-      //tmp.push_back(postfixForm[i]);
+      tmp.push_back(postfixForm[i]);
     }
     else
     {
-      tmp.push_back(postfixForm[i - 1]);
+      //tmp.push_back(postfixForm[i - 1]);
       if ((tmp != "*") && (tmp != "/") && (tmp != "+") && (tmp != "-"))
       {
         if (!isNumber(tmp))
@@ -239,6 +239,7 @@ double Converter::Calculate(const std::string & _postfixForm, const Variables& _
       {
         double b = result.Top(); result.Pop();
         double a = result.Top(); result.Pop();
+        std::cout << "   a " << a << "    b " << b;
         result.Push(a + b);
       }
       else if (tmp == "-")
@@ -269,7 +270,7 @@ void Converter::Clear()
   delete[] operands;
 }
 
-std::string*& Converter::getOperands()
+std::string* Converter::getOperands()
 {
   return operands;
 }

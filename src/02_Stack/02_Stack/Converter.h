@@ -23,7 +23,7 @@ public:
   static int getPriorityOfOperator(const char _operator);
   static void Clear();
 
-  static std::string*& getOperands();
+  static std::string* getOperands();
   static int getCountOfOperands();
 
 private:

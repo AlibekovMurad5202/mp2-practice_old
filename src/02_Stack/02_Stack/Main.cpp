@@ -18,8 +18,9 @@ int main()
     std::cout << "errorLine: " << e.errorLine() << std::endl;
     std::cout << "errorFile: " << e.errorFile() << std::endl;
   }
-  
+
   Variables var(Converter::getCountOfOperands(), Converter::getOperands());
+  var.setValues();
 
   try
   {

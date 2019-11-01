@@ -3,6 +3,7 @@
 Variables::Variables(int _countOFVariables, const std::string* _variables)
 {
   countOfVariables = _countOFVariables;
+  values = new double[countOfVariables];
   variables = new std::string[countOfVariables];
   for (int i = 0; i < countOfVariables; i++)
   {
@@ -35,4 +36,6 @@ Variables::~Variables()
 {
   if (variables != nullptr)
     delete[] variables;
+  if (values != nullptr)
+    delete[] values;
 }
