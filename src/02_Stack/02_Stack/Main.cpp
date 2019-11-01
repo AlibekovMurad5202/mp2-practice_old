@@ -20,7 +20,6 @@ int main()
   }
 
   Variables var(Converter::getCountOfOperands(), Converter::getOperands());
-  var.setValues();
 
   try
   {

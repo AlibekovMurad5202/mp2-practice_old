@@ -14,14 +14,13 @@ public:
   Variables(int _countOFVariables, const std::string* _variables);
 
   void setValues();
-
   double& operator[](int index);
   const double& operator[](int index) const;
 
   ~Variables();
 
 private:
-
+  static bool isNumber(const std::string& _str);
 };
 
 

@@ -191,31 +191,20 @@ double Converter::Calculate(const std::string & _postfixForm, const Variables& _
   Stack<double> result(postfixForm.length());
   std::string tmp;
   int value;
-
   for (int i = 0, j = 0; i < postfixForm.length(); i++)
   {
-    std::cout << std::endl << "Iteration: #" << i << std::endl;
-    
-    if (postfixForm[i] != ' ')           // |a b + c + |
+    if ((postfixForm[i] != ' ')) 
     {
       tmp.push_back(postfixForm[i]);
     }
     else
     {
-      //tmp.push_back(postfixForm[i - 1]);
       if ((tmp != "*") && (tmp != "/") && (tmp != "+") && (tmp != "-"))
       {
-        if (!isNumber(tmp))
-        {
-          int idx = 0;
-          while ((idx < countOfOperands) && (operands[idx++] != tmp));
-
-          result.Push(_var.values[idx]);
-        }
-        else
-        {
-          result.Push(stod(tmp, 0));
-        }
+        int idx = 0;
+        while ((idx < _var.countOfVariables) && (operands[idx++] != tmp));
+        idx--;
+        result.Push(_var.values[idx]);
         tmp.clear();
       }
       else if (tmp == "*")
@@ -239,7 +228,6 @@ double Converter::Calculate(const std::string & _postfixForm, const Variables& _
       {
         double b = result.Top(); result.Pop();
         double a = result.Top(); result.Pop();
-        std::cout << "   a " << a << "    b " << b;
         result.Push(a + b);
       }
       else if (tmp == "-")
@@ -249,8 +237,6 @@ double Converter::Calculate(const std::string & _postfixForm, const Variables& _
         result.Push(a - b);
       }
     }
-      //std::cout << "/" << tmp << "/";
-    tmp.clear();
   }
   return result.Top();
 }
@@ -278,9 +264,4 @@ std::string* Converter::getOperands()
 int Converter::getCountOfOperands()
 {
   return countOfOperands;
-}
-
-bool Converter::isNumber(const std::string& _str)
-{
-  return ((!_str.empty()) && (_str.find_first_not_of("0123456789") == _str.npos));
 }
