@@ -1,8 +1,12 @@
 #include "Variables.h"
 
-Variables::Variables(int _countOFVariables, const std::string* _variables)
+Variables::Variables(const std::string* _variables)
 {
-  countOfVariables = _countOFVariables;
+  int countOfOperands = 0;
+  for (int i = 0; _variables[i] != " "; i++)
+    countOfOperands++;
+  countOfVariables = countOfOperands;
+
   values = new double[countOfVariables];
   variables = new std::string[countOfVariables];
 
@@ -13,7 +17,7 @@ Variables::Variables(int _countOFVariables, const std::string* _variables)
     bool cont = false;
     for (int j = 0; j < i; j++)
       if (variables[i] == variables[j]) {
-        variables[j] = variables[i];
+        values[i] = values[j];
         cont = true;
         break;
       }
@@ -49,7 +53,7 @@ const double & Variables::operator[](int index) const
 
 bool Variables::isNumber(const std::string& _str)
 {
-  return ((!_str.empty()) && (_str.find_first_not_of("0123456789") == _str.npos));
+  return ((!_str.empty()) && (_str.find_first_not_of("0123456789.") == _str.npos));
 }
 
 Variables::~Variables()

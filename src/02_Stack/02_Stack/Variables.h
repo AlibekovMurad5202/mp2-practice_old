@@ -11,7 +11,7 @@ public:
   std::string* variables;
   double* values;
 
-  Variables(int _countOFVariables, const std::string* _variables);
+  Variables(const std::string* _variables);
 
   void setValues();
   double& operator[](int index);

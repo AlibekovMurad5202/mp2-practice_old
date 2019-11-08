@@ -1,25 +1,20 @@
 #include "Converter.h"
-#include "string"
-#include "iostream"
 
 std::string Converter::postfixForm;
-int Converter::countOfOperands;
 std::string *Converter::operands;
-//int Converter::countOfOperators;
 
 std::string Converter::ConvertToPostfixForm(const std::string & _expression)
 {
   std::string *_operands = new std::string[_expression.length()];
   std::string buffer;
   int lengthOfExpression = _expression.length();
-  int numberOfOperators = 0;
-  int numberOfOperands = 0;
-  countOfOperands = 0;
-  int numberOfLeftBrackets = 0;
-  int numberOfRightBrackets = 0;
+  int countOfOperators = 0;
+  int countOfOperands = 0;
+  int countOfLeftBrackets = 0;
+  int countOfRightBrackets = 0;
   char lastSymbol = 0;
-  postfixForm.clear();
   int indexOfOperand = 0;
+  postfixForm.clear();
 
   Stack<char> operators(lengthOfExpression);
   Stack<std::string> operands(lengthOfExpression);
@@ -33,7 +28,7 @@ std::string Converter::ConvertToPostfixForm(const std::string & _expression)
         || (_expression[i] == '(') || (_expression[i] == ')')
         || (_expression[i] == ' '))
       {
-        numberOfOperands++;
+        countOfOperands++;
         operands.Push(buffer);
         {
           int k = 0;
@@ -51,7 +46,7 @@ std::string Converter::ConvertToPostfixForm(const std::string & _expression)
       && (_expression[i] != '*') && (_expression[i] != '/')
       && (_expression[i] != '(') && (_expression[i] != ')'))
     {
-      if (numberOfOperands == (numberOfOperators + 1))
+      if (countOfOperands == (countOfOperators + 1))
       {
         ExceptionWrongExpression ex(__LINE__, __FILE__);
         throw ex;
@@ -60,7 +55,7 @@ std::string Converter::ConvertToPostfixForm(const std::string & _expression)
       buffer.push_back(_expression[i]);
       if (i == (lengthOfExpression - 1))
       {
-        numberOfOperands++;
+        countOfOperands++;
         operands.Push(buffer);
         {
           int k = 0;
@@ -83,19 +78,19 @@ std::string Converter::ConvertToPostfixForm(const std::string & _expression)
         ExceptionWrongExpression ex(__LINE__, __FILE__);
         throw ex;
       }
-      numberOfLeftBrackets++;
+      countOfLeftBrackets++;
       operators.Push(_expression[i]);
     }
     else if (_expression[i] == ')')
     {
       if ((lastSymbol == '+') || (lastSymbol == '-')
        || (lastSymbol == '*') || (lastSymbol == '/')
-       || (lastSymbol == '('))// || (lastSymbol == ')'))
+       || (lastSymbol == '('))
       {
         ExceptionWrongExpression ex(__LINE__, __FILE__);
         throw ex;
       }
-      numberOfRightBrackets++;
+      countOfRightBrackets++;
       while (operators.Top() != '(')
       {
         std::string tmp;
@@ -121,12 +116,12 @@ std::string Converter::ConvertToPostfixForm(const std::string & _expression)
         throw ex;
       }
       operators.Push(_expression[i]);
-      numberOfOperators++;
+      countOfOperators++;
     }
     else if (getPriorityOfOperator(_expression[i]) > getPriorityOfOperator(operators.Top()))
     {
       operators.Push(_expression[i]);
-      numberOfOperators++;
+      countOfOperators++;
     }
     else
     {
@@ -139,15 +134,15 @@ std::string Converter::ConvertToPostfixForm(const std::string & _expression)
         operands.Push(tmp);
       }
       operators.Push(_expression[i]);
-      numberOfOperators++;
+      countOfOperators++;
     }
 
     if (_expression[i] != ' ')
       lastSymbol = _expression[i];
   }
 
-  if ((numberOfOperands != numberOfOperators + 1)
-    || (numberOfLeftBrackets != numberOfRightBrackets))
+  if ((countOfOperands != countOfOperators + 1)
+    || (countOfLeftBrackets != countOfRightBrackets))
   {
     ExceptionWrongExpression e(__LINE__, __FILE__);
     throw e;
@@ -175,11 +170,11 @@ std::string Converter::ConvertToPostfixForm(const std::string & _expression)
     postfixForm.insert(postfixForm.length(), buffer);
   }
 
-  countOfOperands = numberOfOperands;
   {
-    Converter::operands = new std::string[countOfOperands];
+    Converter::operands = new std::string[countOfOperands + 1]; //1 for " ", then we can forgot count of operands
     for (int i = 0; i < countOfOperands; i++)
       Converter::operands[i] = _operands[i];
+    Converter::operands[countOfOperands] = " "; //"end of vecror"
     delete[] _operands;
   }
 
@@ -202,10 +197,9 @@ double Converter::Calculate(const std::string & _postfixForm, const Variables& _
       if ((tmp != "*") && (tmp != "/") && (tmp != "+") && (tmp != "-"))
       {
         int idx = 0;
-        while ((idx < _var.countOfVariables) && (operands[idx++] != tmp));
+        while ((idx < _var.countOfVariables) && (_var.variables[idx++] != tmp));
         idx--;
         result.Push(_var.values[idx]);
-        tmp.clear();
       }
       else if (tmp == "*")
       {
@@ -236,6 +230,7 @@ double Converter::Calculate(const std::string & _postfixForm, const Variables& _
         double a = result.Top(); result.Pop();
         result.Push(a - b);
       }
+      tmp.clear();
     }
   }
   return result.Top();
@@ -251,17 +246,6 @@ int Converter::getPriorityOfOperator(const char _operator)
 
 void Converter::Clear()
 {
-  Converter::countOfOperands = 0;
   Converter::postfixForm.clear();
   delete[] operands;
-}
-
-std::string* Converter::getOperands()
-{
-  return operands;
-}
-
-int Converter::getCountOfOperands()
-{
-  return countOfOperands;
 }
