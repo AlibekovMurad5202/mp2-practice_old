@@ -1,6 +1,5 @@
 #include "Converter.h"
 
-std::string Converter::postfixForm;
 std::string *Converter::operands;
 
 std::string Converter::ConvertToPostfixForm(const std::string & _expression)
@@ -14,7 +13,6 @@ std::string Converter::ConvertToPostfixForm(const std::string & _expression)
   int countOfRightBrackets = 0;
   char lastSymbol = 0;
   int indexOfOperand = 0;
-  postfixForm.clear();
 
   Stack<char> operators(lengthOfExpression);
   Stack<std::string> operands(lengthOfExpression);
@@ -161,6 +159,8 @@ std::string Converter::ConvertToPostfixForm(const std::string & _expression)
     reverseStackOfOperands.Push(operands.Top());
 
   int startPosition = 0;
+
+  std::string postfixForm;
   while (!reverseStackOfOperands.IsEmpty())
   {
     startPosition = postfixForm.length();
@@ -183,14 +183,15 @@ std::string Converter::ConvertToPostfixForm(const std::string & _expression)
 
 double Converter::Calculate(const std::string & _postfixForm, const Variables& _var)
 {
-  Stack<double> result(postfixForm.length());
+  Stack<double> result(_postfixForm.length());
   std::string tmp;
   int value;
-  for (int i = 0, j = 0; i < postfixForm.length(); i++)
+
+  for (int i = 0, j = 0; i < _postfixForm.length(); i++)
   {
-    if ((postfixForm[i] != ' ')) 
+    if ((_postfixForm[i] != ' ')) 
     {
-      tmp.push_back(postfixForm[i]);
+      tmp.push_back(_postfixForm[i]);
     }
     else
     {
@@ -246,6 +247,5 @@ int Converter::getPriorityOfOperator(const char _operator)
 
 void Converter::Clear()
 {
-  Converter::postfixForm.clear();
   delete[] operands;
 }

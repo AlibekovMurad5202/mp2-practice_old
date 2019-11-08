@@ -23,5 +23,4 @@ private:
   static bool isNumber(const std::string& _str);
 };
 
-
 #endif // !__VARIABLES_H__

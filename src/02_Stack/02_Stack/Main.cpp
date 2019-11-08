@@ -15,24 +15,17 @@ int main()
     std::cout << std::endl << "Expression: ";
     std::string buffer;
     std::getline(std::cin, buffer);
+
     try
     {
       std::cout << "Postfix form: " << Converter::ConvertToPostfixForm(buffer) << std::endl;
-    }
-    catch (MyException const& e)
-    {
-      std::cout << std::endl << e.what() << std::endl;
-      std::cout << "errorLine: " << e.errorLine() << std::endl;
-      std::cout << "errorFile: " << e.errorFile() << std::endl;
-    }
 
-    Variables var(Converter::operands);
-
-    try
-    {
+      Variables var(Converter::operands);
+      
       std::cout << "Result: ";
       std::cout << Converter::Calculate(Converter::ConvertToPostfixForm(buffer), var);
       std::cout << std::endl << std::endl;
+      Converter::Clear();
     }
     catch (MyException const& e)
     {
@@ -40,8 +33,6 @@ int main()
       std::cout << "errorLine: " << e.errorLine() << std::endl;
       std::cout << "errorFile: " << e.errorFile() << std::endl;
     }
-
-    Converter::Clear();
 
     std::cout << "Do you want to exit?" << std::endl;
     std::cout << "1 - Yes       0 - No" << std::endl;

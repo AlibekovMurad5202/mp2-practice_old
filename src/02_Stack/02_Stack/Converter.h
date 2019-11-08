@@ -8,7 +8,6 @@
 static class Converter
 {
 private:
-  static std::string postfixForm;
   static int getPriorityOfOperator(const char _operator);
 
 public:
