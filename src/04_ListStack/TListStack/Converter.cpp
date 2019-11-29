@@ -179,7 +179,6 @@ std::string Converter::ConvertToPostfixForm(const std::string & _expression)
 double Converter::Calculate(const std::string & _postfixForm, const Variables& _var)
 {
   std::string tmp;
-  int value;
 
   for (int i = 0, j = 0; i < _postfixForm.length(); i++)
   {

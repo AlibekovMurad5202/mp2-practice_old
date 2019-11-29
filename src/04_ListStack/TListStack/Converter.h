@@ -4,22 +4,21 @@
 #include "stdlib.h"
 #include "TArrayStack.h"
 #include "TListStack.h"
-#include "Stack.h"
 #include "Variables.h"
 
 class Converter
 {
+private:
+  TStack<char>* operators;
+  TStack<std::string>* stackOfOperands;
+  TStack<double>* result;
+
+  int getPriorityOfOperator(const char _operator);
+
 public:
   std::string *operands;
   std::string postfixForm;
 
-private:
-  int getPriorityOfOperator(const char _operator);
-  Stack<char>* operators;
-  Stack<std::string>* stackOfOperands;
-  Stack<double>* result;
-
-public:
   explicit Converter(bool _isTListStack = false);
   ~Converter();
 

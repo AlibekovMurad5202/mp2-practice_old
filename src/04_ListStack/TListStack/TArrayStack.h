@@ -1,10 +1,10 @@
 #ifndef __TARRAYSTACK_H__
 #define __TARRAYSTACK_H__
 
-#include "Stack.h"
+#include "TStack.h"
 
 template<typename ValType>
-class TArrayStack : public Stack<ValType>
+class TArrayStack : public TStack<ValType>
 {
 protected:
   int size;
@@ -22,8 +22,6 @@ public:
 
   bool IsEmpty() const;
   bool IsFull() const;
-
-  //Stack<ValType>& operator=(const Stack<ValType>& _tstack);
 };
 
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//
@@ -98,23 +96,6 @@ template<typename ValType>
 bool TArrayStack<ValType>::IsFull() const
 {
   return (head == size);
-}
-
-/*template<typename ValType>
-Stack<ValType>& Stack<ValType>::operator=(const Stack<ValType>& _tstack)
-{
-  if (this == &_tstack)
-    return *this;
-  if (size != _tstack.size)
-  {
-    delete elems;
-    size = _tstack.size;
-    elems = new ValType[size];
-  }
-  head = _tstack.head;
-  for (int i = 0; i < size; i++)
-    elems[i] = _tstack.elems[i];
-  return *this;
-}*/;
+};
 
 #endif // !__STACK_H__

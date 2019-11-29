@@ -2,14 +2,14 @@
 #define __TLISTSTACK_H__
 
 
-#include "Stack.h"
+#include "TStack.h"
 #include "TList.h"
 
 // list:   [0 : ...] --> [0 : ...] --> [0 : ...] --> ... --> [0 : ...]
-// stack: [   top           ...           ...        ...        ...   ]
+// stack:  [  top           ...           ...        ...        ...  ]
 
 template<typename ValType>
-class TListStack : public Stack<ValType>
+class TListStack : public TStack<ValType>
 {
 protected:
   TList<int, ValType>* list;

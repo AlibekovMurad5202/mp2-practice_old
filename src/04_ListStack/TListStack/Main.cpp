@@ -1,7 +1,8 @@
-#include "TList.h"
 #include "Converter.h"
 
-void _tlistMain()
+//----------------------------------- TList ---------------------------------//
+
+void _tListMain()
 {
   TList<int, std::string> list;
   std::string words[7] = {"I", "She", "He", "It", "We", "You", "They"};
@@ -121,39 +122,22 @@ void _tStackMain(bool _isTListStack = false)
 int main()
 {
   std::cout << "//~~~~~~~~~~~~~~~~~ Test of class \"TList\" ~~~~~~~~~~~~//" << std::endl << std::endl;
-  _tlistMain();
+  _tListMain();
 
   std::cout << "//~~~~~~~~~~~~~~~~~ Test of poftfix form ~~~~~~~~~~~~//" << std::endl << std::endl;
-
-  int stackBase = 0;
-  int isItAll = false;
-  enum _baseOfStack
-  {
-    _array = 0,
-    _list = 1
-  } baseOfStack;
-
+  bool isItAll = false;
   do
   {
     std::cout << "Choose base of stack: " << std::endl << "  1 - List     0 - Array" << std::endl;
-    std::cin >> stackBase;
-    baseOfStack = stackBase ? _list : _array;
+    int baseOfStack = 0;
+    std::cin >> baseOfStack;
     std::cin.ignore();
-    switch (baseOfStack)
-    {
-    case _array:
-      _tStackMain(false);
-      break;
-    case _list:
-      _tStackMain(true);
-      break;
-    }
+    _tStackMain(baseOfStack ? false : true);
     std::cout << "Do you want to exit?" << std::endl;
     std::cout << "  1 - Yes     0 - No" << std::endl << std::endl;
     std::cin >> isItAll;
     std::cin.ignore();
   } while (!isItAll);
-
   system("pause");
   return 0;
 }

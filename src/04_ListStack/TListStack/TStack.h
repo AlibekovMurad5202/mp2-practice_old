@@ -4,7 +4,7 @@
 #include "MyExceptions.h"
 
 template<typename ValueType>
-class Stack
+class TStack
 {
 public:
   virtual void Push(ValueType element) = 0;
