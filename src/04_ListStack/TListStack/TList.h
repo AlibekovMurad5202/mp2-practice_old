@@ -1,61 +1,14 @@
-#ifndef __TARRAYLIST_H__
-#define __TARRAYLIST_H__
+#ifndef __TLIST_H__
+#define __TLIST_H__
 #include "MyExceptions.h"
 #include "TNode.h"
-/*
-//~~~~~~~~~~~~~~~~~~~~~~~~ struct TNode ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//
 
-template <typename TKey, typename TData>
-struct TNode
-{
-  TKey key;
-  TData* pData;
-  TNode* pNext;
-
-  TNode();
-  TNode(TKey _key, TData* _data);
-  TNode(const TNode<TKey, TData>& _tnode);
-  ~TNode();
-};
-
-template <typename TKey, typename TData>
-TNode<TKey, TData>::TNode()
-{
-  pData = new TData;
-  pNext = nullptr;
-}
-
-template <typename TKey, typename TData>
-TNode<TKey, TData>::TNode(TKey _key, TData* _data)
-{
-  pData = new TData;
-  pNext = nullptr;
-  key = _key;
-  *pData = *_data;
-}
-
-template <typename TKey, typename TData>
-TNode<TKey, TData>::TNode(const TNode<TKey, TData>& _tnode)
-{
-  pData = new TData;
-  pNext = nullptr;
-  key = _tnode.key;
-  *pData = *_tnode.pData;
-}
-
-template<typename TKey, typename TData>
-TNode<TKey, TData>::~TNode()
-{
-  if (pData)
-    delete pData;
-}
-*/
 //~~~~~~~~~~~~~~~~~~~~~~~~ class TList ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//
 
 template <typename TKey, typename TData>
 class TList
 {
-private:
+protected:
   TNode<TKey, TData>* pFirst;
   TNode<TKey, TData>* pNext;
   TNode<TKey, TData>* pPrevious;
@@ -78,6 +31,9 @@ public:
   void Next();
 
   bool IsEnded() const;
+  bool IsEmpty() const;
+
+  TData getFirstNodeData() const;
 
   template <typename TKey, typename TData>
   friend std::ostream& operator<<(std::ostream& out, const TList<TKey, TData>& _tlist);
@@ -277,6 +233,12 @@ bool TList<TKey, TData>::IsEnded() const
 }
 
 template <typename TKey, typename TData>
+bool TList<TKey, TData>::IsEmpty() const
+{
+  return (pFirst == nullptr);
+}
+
+template <typename TKey, typename TData>
 void TList<TKey, TData>::Next()
 {
   if (IsEnded() == true)
@@ -293,6 +255,17 @@ void TList<TKey, TData>::Next()
 }
 
 template <typename TKey, typename TData>
+TData TList<TKey, TData>::getFirstNodeData() const
+{
+  if (pFirst == nullptr)
+  {
+    ExceptionEmptyList e(__LINE__, __FILE__);
+    throw e;
+  }
+  return *(pFirst->pData);
+}
+
+template <typename TKey, typename TData>
 std::ostream& operator<<(std::ostream& out, const TList<TKey, TData>& _tlist)
 {
   TNode<TKey, TData> *node = _tlist.pFirst;
@@ -306,4 +279,4 @@ std::ostream& operator<<(std::ostream& out, const TList<TKey, TData>& _tlist)
   return out;
 };
 
-#endif // !__TARRAYLIST_H__
+#endif // !__TLIST_H__

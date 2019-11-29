@@ -2,20 +2,29 @@
 #define __CONVERTER_H__
 
 #include "stdlib.h"
+#include "TArrayStack.h"
+#include "TListStack.h"
 #include "Stack.h"
 #include "Variables.h"
 
-static class Converter
+class Converter
 {
+public:
+  std::string *operands;
+  std::string postfixForm;
+
 private:
-  static int getPriorityOfOperator(const char _operator);
+  int getPriorityOfOperator(const char _operator);
+  Stack<char>* operators;
+  Stack<std::string>* stackOfOperands;
+  Stack<double>* result;
 
 public:
-  static std::string ConvertToPostfixForm(const std::string& _expression);
-  static double Calculate(const std::string& _postfixForm, const Variables & _var);
-  static void Clear();
+  explicit Converter(bool _isTListStack = false);
+  ~Converter();
 
-  static std::string *operands;
+  std::string ConvertToPostfixForm(const std::string& _expression);
+  double Calculate(const std::string& _postfixForm, const Variables & _var);
 };
 
 #endif // !__CONVERTER_H__

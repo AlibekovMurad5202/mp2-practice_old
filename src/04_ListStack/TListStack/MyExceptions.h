@@ -77,6 +77,15 @@ public:
   ~ExceptionEmptyStack();
 };
 
+class ExceptionEmptyList : public MyException
+{
+public:
+  ExceptionEmptyList();
+  ExceptionEmptyList(const ExceptionEmptyList& _exception);
+  ExceptionEmptyList(int _line, const char* _file);
+  ~ExceptionEmptyList();
+};
+
 class ExceptionDivisionByZero : public MyException
 {
 public:

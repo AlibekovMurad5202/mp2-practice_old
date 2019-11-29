@@ -84,15 +84,10 @@ void _tlistMain()
   }
 }
 
-
-
-
-
 //--------------------------------- Converter ------------------------------//
 
-void _tStackMain()
+void _tStackMain(bool _isTListStack = false)
 {
-
   std::cout << "Expression can include " << std::endl;
   std::cout << "  * real numbers (example: '2', '71.98')," << std::endl;
   std::cout << "  * operands (example: 'x', 'B', 'asdf', 'amr12')," << std::endl;
@@ -105,22 +100,20 @@ void _tStackMain()
 
   try
   {
-    std::cout << "Postfix form: " << Converter::ConvertToPostfixForm(buffer) << std::endl;
+    Converter tmp(_isTListStack);
+    std::cout << "Postfix form: " << tmp.ConvertToPostfixForm(buffer) << std::endl;
 
-    Variables var(Converter::operands);
+    Variables var(tmp.operands);
 
-    std::cout << "Result: ";
-    std::cout << Converter::Calculate(Converter::ConvertToPostfixForm(buffer), var);
-    std::cout << std::endl << std::endl;
-    Converter::Clear();
+    double result = tmp.Calculate(tmp.postfixForm, var);
+    std::cout << "Result: " << result << std::endl << std::endl;
   }
   catch (MyException const& e)
   {
-    std::cout << std::endl << e.what() << std::endl;
-    std::cout << "errorLine: " << e.errorLine() << std::endl;
-    std::cout << "errorFile: " << e.errorFile() << std::endl;
+    std::cout << std::endl << "  " << e.what() << std::endl;
+    std::cout << "  errorLine: " << e.errorLine() << std::endl;
+    std::cout << "  errorFile: " << e.errorFile() << std::endl << std::endl;
   }
-
 }
 
 //--------------------------------------- Main ------------------------------------------//
@@ -136,27 +129,27 @@ int main()
   int isItAll = false;
   enum _baseOfStack
   {
-    _array,
-    _list
+    _array = 0,
+    _list = 1
   } baseOfStack;
 
   do
   {
-    std::cout << "Choose: /n    1 - List     0 - Array" << std::endl;
+    std::cout << "Choose base of stack: " << std::endl << "  1 - List     0 - Array" << std::endl;
     std::cin >> stackBase;
-    baseOfStack = stackBase ? _array : _list;
+    baseOfStack = stackBase ? _list : _array;
     std::cin.ignore();
     switch (baseOfStack)
     {
     case _array:
-      _tStackMain();
+      _tStackMain(false);
       break;
     case _list:
-      _tStackMain();
+      _tStackMain(true);
       break;
     }
     std::cout << "Do you want to exit?" << std::endl;
-    std::cout << "1 - Yes       0 - No" << std::endl;
+    std::cout << "  1 - Yes     0 - No" << std::endl << std::endl;
     std::cin >> isItAll;
     std::cin.ignore();
   } while (!isItAll);

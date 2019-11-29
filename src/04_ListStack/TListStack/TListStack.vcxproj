@@ -118,6 +118,7 @@
     <ClInclude Include="Converter.h" />
     <ClInclude Include="MyExceptions.h" />
     <ClInclude Include="Stack.h" />
+    <ClInclude Include="TArrayStack.h" />
     <ClInclude Include="TList.h" />
     <ClInclude Include="TListStack.h" />
     <ClInclude Include="TNode.h" />

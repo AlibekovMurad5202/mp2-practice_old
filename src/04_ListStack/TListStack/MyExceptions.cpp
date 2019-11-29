@@ -185,6 +185,34 @@ ExceptionEmptyStack::~ExceptionEmptyStack()
   line = -1;
 }
 
+
+ExceptionEmptyList::ExceptionEmptyList()
+{
+  str_what = "List is empty!";
+  line = -1;
+  file = 0;
+}
+
+ExceptionEmptyList::ExceptionEmptyList(const ExceptionEmptyList& _exception)
+{
+  str_what = _exception.what();
+  line = _exception.errorLine();
+  file = _exception.errorFile();
+}
+
+ExceptionEmptyList::ExceptionEmptyList(int _line, const char* _file)
+{
+  str_what = "List is empty!";
+  line = _line;
+  file = _file;
+}
+
+ExceptionEmptyList::~ExceptionEmptyList()
+{
+  line = -1;
+}
+
+
 ExceptionDivisionByZero::ExceptionDivisionByZero()
 {
   str_what = "Division by zero!";

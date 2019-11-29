@@ -1,7 +1,5 @@
 #include "Converter.h"
 
-std::string *Converter::operands;
-
 std::string Converter::ConvertToPostfixForm(const std::string & _expression)
 {
   std::string *_operands = new std::string[_expression.length()];
@@ -14,9 +12,6 @@ std::string Converter::ConvertToPostfixForm(const std::string & _expression)
   char lastSymbol = 0;
   int indexOfOperand = 0;
 
-  Stack<char> operators(lengthOfExpression);
-  Stack<std::string> operands(lengthOfExpression);
-
   for (int i = 0; i < lengthOfExpression; i++)
   {
     if (buffer.length() != 0)
@@ -27,7 +22,7 @@ std::string Converter::ConvertToPostfixForm(const std::string & _expression)
         || (_expression[i] == ' '))
       {
         countOfOperands++;
-        operands.Push(buffer);
+        (*stackOfOperands).Push(buffer);
         {
           int k = 0;
           while ((k < indexOfOperand) &&
@@ -55,7 +50,7 @@ std::string Converter::ConvertToPostfixForm(const std::string & _expression)
       if (i == (lengthOfExpression - 1))
       {
         countOfOperands++;
-        operands.Push(buffer);
+        (*stackOfOperands).Push(buffer);
         {
           int k = 0;
           while ((k < indexOfOperand) &&
@@ -78,7 +73,7 @@ std::string Converter::ConvertToPostfixForm(const std::string & _expression)
         throw ex;
       }
       countOfLeftBrackets++;
-      operators.Push(_expression[i]);
+      (*operators).Push(_expression[i]);
     }
     else if (_expression[i] == ')')
     {
@@ -90,14 +85,14 @@ std::string Converter::ConvertToPostfixForm(const std::string & _expression)
         throw ex;
       }
       countOfRightBrackets++;
-      while (operators.Top() != '(')
+      while ((*operators).Top() != '(')
       {
         std::string tmp;
         try
         {
-          tmp.push_back(operators.Top());
-          operators.Pop();
-          operands.Push(tmp);
+          tmp.push_back((*operators).Top());
+          (*operators).Pop();
+          (*stackOfOperands).Push(tmp);
         }
         catch (ExceptionEmptyStack const& e)
         {
@@ -105,34 +100,34 @@ std::string Converter::ConvertToPostfixForm(const std::string & _expression)
           throw ex;
         }
       }
-      operators.Pop();
+      (*operators).Pop();
     }
-    else if (operators.IsEmpty())
+    else if ((*operators).IsEmpty())
     {
       if (lastSymbol == 0)
       {
         ExceptionWrongExpression ex(__LINE__, __FILE__);
         throw ex;
       }
-      operators.Push(_expression[i]);
+      (*operators).Push(_expression[i]);
       countOfOperators++;
     }
-    else if (getPriorityOfOperator(_expression[i]) > getPriorityOfOperator(operators.Top()))
+    else if (getPriorityOfOperator(_expression[i]) > getPriorityOfOperator((*operators).Top()))
     {
-      operators.Push(_expression[i]);
+      (*operators).Push(_expression[i]);
       countOfOperators++;
     }
     else
     {
-      while ((!operators.IsEmpty()) && (operators.Top() != '(')
-        && (getPriorityOfOperator(_expression[i]) <= getPriorityOfOperator(operators.Top())))
+      while ((!(*operators).IsEmpty()) && ((*operators).Top() != '(')
+        && (getPriorityOfOperator(_expression[i]) <= getPriorityOfOperator((*operators).Top())))
       {
         std::string tmp;
-        tmp.push_back(operators.Top());
-        operators.Pop();
-        operands.Push(tmp);
+        tmp.push_back((*operators).Top());
+        (*operators).Pop();
+        (*stackOfOperands).Push(tmp);
       }
-      operators.Push(_expression[i]);
+      (*operators).Push(_expression[i]);
       countOfOperators++;
     }
 
@@ -147,21 +142,20 @@ std::string Converter::ConvertToPostfixForm(const std::string & _expression)
     throw e;
   }
 
-  while (!operators.IsEmpty())
+  while (!(*operators).IsEmpty())
   {
     std::string tmp;
-    tmp.push_back(operators.Top());
-    operators.Pop();
-    operands.Push(tmp);
+    tmp.push_back((*operators).Top());
+    (*operators).Pop();
+    (*stackOfOperands).Push(tmp);
   }
 
-  Stack<std::string> reverseStackOfOperands(lengthOfExpression);
-  for (; !operands.IsEmpty(); operands.Pop())
-    reverseStackOfOperands.Push(operands.Top());
+  TArrayStack<std::string> reverseStackOfOperands(lengthOfExpression);
+  for (; !(*stackOfOperands).IsEmpty(); (*stackOfOperands).Pop())
+    reverseStackOfOperands.Push((*stackOfOperands).Top());
 
   int startPosition = 0;
 
-  std::string postfixForm;
   while (!reverseStackOfOperands.IsEmpty())
   {
     startPosition = postfixForm.length();
@@ -184,7 +178,6 @@ std::string Converter::ConvertToPostfixForm(const std::string & _expression)
 
 double Converter::Calculate(const std::string & _postfixForm, const Variables& _var)
 {
-  Stack<double> result(_postfixForm.length());
   std::string tmp;
   int value;
 
@@ -201,41 +194,41 @@ double Converter::Calculate(const std::string & _postfixForm, const Variables& _
         int idx = 0;
         while ((idx < _var.countOfVariables) && (_var.variables[idx++] != tmp));
         idx--;
-        result.Push(_var.values[idx]);
+        (*result).Push(_var.values[idx]);
       }
       else if (tmp == "*")
       {
-        double b = result.Top(); result.Pop();
-        double a = result.Top(); result.Pop();
-        result.Push(a * b);
+        double b = (*result).Top(); (*result).Pop();
+        double a = (*result).Top(); (*result).Pop();
+        (*result).Push(a * b);
       }
       else if (tmp == "/")
       {
-        double b = result.Top(); result.Pop();
-        double a = result.Top(); result.Pop();
+        double b = (*result).Top(); (*result).Pop();
+        double a = (*result).Top(); (*result).Pop();
         if (b == 0)
         {
           ExceptionDivisionByZero e(__LINE__, __FILE__);
           throw e;
         }
-        result.Push(a / b);
+        (*result).Push(a / b);
       }
       else if (tmp == "+")
       {
-        double b = result.Top(); result.Pop();
-        double a = result.Top(); result.Pop();
-        result.Push(a + b);
+        double b = (*result).Top(); (*result).Pop();
+        double a = (*result).Top(); (*result).Pop();
+        (*result).Push(a + b);
       }
       else if (tmp == "-")
       {
-        double b = result.Top(); result.Pop();
-        double a = result.Top(); result.Pop();
-        result.Push(a - b);
+        double b = (*result).Top(); (*result).Pop();
+        double a = (*result).Top(); (*result).Pop();
+        (*result).Push(a - b);
       }
       tmp.clear();
     }
   }
-  return result.Top();
+  return (*result).Top();
 }
 
 int Converter::getPriorityOfOperator(const char _operator)
@@ -246,7 +239,26 @@ int Converter::getPriorityOfOperator(const char _operator)
   return 0;
 }
 
-void Converter::Clear()
+Converter::Converter(bool _isTListStack)
+{
+  if (_isTListStack == true)
+  {
+    operators = new TListStack<char>();
+    stackOfOperands = new TListStack<std::string>();
+    result = new TListStack<double>();
+  }
+  else
+  {
+    operators = new TArrayStack<char>(1024);
+    stackOfOperands = new TArrayStack<std::string>(1024);
+    result = new TArrayStack<double>(1024);
+  }
+}
+
+Converter::~Converter()
 {
   delete[] operands;
+  delete stackOfOperands;
+  delete operators;
+  delete result;
 }
