@@ -12,7 +12,7 @@ template<typename ValType>
 class TListStack : public TStack<ValType>
 {
 protected:
-  TList<int, ValType>* list;
+  TList<ValType, void*>* list;
 
 public:
   TListStack();
@@ -30,13 +30,13 @@ public:
 template<typename ValType>
 TListStack<ValType>::TListStack()
 {
-  list = new TList<int, ValType>;
+  list = new TList<ValType, void*>;
 }
 
 template<typename ValType>
 TListStack<ValType>::TListStack(const TListStack& _stack)
 {
-  list = new TList<int, ValType>(*(_stack->list));
+  list = new TList<ValType, void*>(*(_stack->list));
 }
 
 template<typename ValType>
@@ -48,7 +48,7 @@ TListStack<ValType>::~TListStack()
 template<typename ValType>
 void TListStack<ValType>::Push(ValType element)
 {
-  list->InsertBegin(0, &element);
+  list->InsertBegin(element, nullptr);
 }
 
 template<typename ValType>
@@ -59,7 +59,7 @@ ValType TListStack<ValType>::Top() const
     ExceptionEmptyStack e(__LINE__, __FILE__);
     throw e;
   }
-  return list->getFirstNodeData();
+  return list->getFirstNodeKey();
 }
 
 template<typename ValType>
@@ -70,7 +70,7 @@ void TListStack<ValType>::Pop()
     ExceptionEmptyStack e(__LINE__, __FILE__);
     throw e;
   }
-  list->Remove(0);
+  list->Remove(list->getFirstNodeKey());
 }
 
 template<typename ValType>

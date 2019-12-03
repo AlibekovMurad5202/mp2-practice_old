@@ -1,4 +1,5 @@
 #include "Converter.h"
+#define TARRAYSTACK_MAX_SIZE 1024
 
 std::string Converter::ConvertToPostfixForm(const std::string & _expression)
 {
@@ -248,9 +249,9 @@ Converter::Converter(bool _isTListStack)
   }
   else
   {
-    operators = new TArrayStack<char>(1024);
-    stackOfOperands = new TArrayStack<std::string>(1024);
-    result = new TArrayStack<double>(1024);
+    operators = new TArrayStack<char>(TARRAYSTACK_MAX_SIZE);
+    stackOfOperands = new TArrayStack<std::string>(TARRAYSTACK_MAX_SIZE);
+    result = new TArrayStack<double>(TARRAYSTACK_MAX_SIZE);
   }
 }
 

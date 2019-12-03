@@ -132,7 +132,7 @@ int main()
     int baseOfStack = 0;
     std::cin >> baseOfStack;
     std::cin.ignore();
-    _tStackMain(baseOfStack ? false : true);
+    _tStackMain(baseOfStack ? true : false);
     std::cout << "Do you want to exit?" << std::endl;
     std::cout << "  1 - Yes     0 - No" << std::endl << std::endl;
     std::cin >> isItAll;

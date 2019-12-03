@@ -25,32 +25,40 @@ struct TNode
 template <typename TKey, typename TData>
 TNode<TKey, TData>::TNode()
 {
-  pData = new TData;
+  pData = nullptr;
   pNext = nullptr;
 }
 
 template <typename TKey, typename TData>
 TNode<TKey, TData>::TNode(TKey _key, TData* _data)
 {
-  pData = new TData;
   pNext = nullptr;
   key = _key;
-  *pData = *_data;
+  if (_data != nullptr)
+  {
+    pData = new TData;
+    *pData = *_data;
+  }
+  else pData = nullptr;
 }
 
 template <typename TKey, typename TData>
 TNode<TKey, TData>::TNode(const TNode<TKey, TData>& _tnode)
 {
-  pData = new TData;
+  if (_tnode.pData != nullptr)
+  {
+    pData = new TData;
+    *pData = *_tnode.pData;
+  }
+  else pData = nullptr;
   pNext = nullptr;
   key = _tnode.key;
-  *pData = *_tnode.pData;
 }
 
 template<typename TKey, typename TData>
 TNode<TKey, TData>::~TNode()
 {
-  if (pData)
+  if (pData != nullptr)
     delete pData;
 }
 

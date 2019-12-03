@@ -33,7 +33,7 @@ public:
   bool IsEnded() const;
   bool IsEmpty() const;
 
-  TData getFirstNodeData() const;
+  TKey getFirstNodeKey() const;
 
   template <typename TKey, typename TData>
   friend std::ostream& operator<<(std::ostream& out, const TList<TKey, TData>& _tlist);
@@ -255,14 +255,14 @@ void TList<TKey, TData>::Next()
 }
 
 template <typename TKey, typename TData>
-TData TList<TKey, TData>::getFirstNodeData() const
+TKey TList<TKey, TData>::getFirstNodeKey() const
 {
   if (pFirst == nullptr)
   {
     ExceptionEmptyList e(__LINE__, __FILE__);
     throw e;
   }
-  return *(pFirst->pData);
+  return pFirst->key;
 }
 
 template <typename TKey, typename TData>
