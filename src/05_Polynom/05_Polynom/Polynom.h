@@ -4,6 +4,7 @@
 #include "TList.h"
 
 #define MAX_KEY 999
+#define MAX_DEGREE 9
 #define UINT unsigned int
 
 class Polynom
