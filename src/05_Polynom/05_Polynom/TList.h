@@ -20,10 +20,10 @@ public:
   TList(const TNode<TKey, TData>* _tnode);
   ~TList();
 
-  void InsertBegin(TKey _newKey, TData* _data);
-  void InsertEnd(TKey _newKey, TData* _data);
-  void InsertBefore(TKey _key, TKey _newKey, TData* _data);
-  void InsertAfter(TKey _key, TKey _newKey, TData* _data);
+  void InsertBegin(TKey _newKey, TData _data);
+  void InsertEnd(TKey _newKey, TData _data);
+  void InsertBefore(TKey _key, TKey _newKey, TData _data);
+  void InsertAfter(TKey _key, TKey _newKey, TData _data);
 
   void Remove(TKey _key);
 
@@ -92,7 +92,7 @@ TList<TKey, TData>::~TList()
 }
 
 template <typename TKey, typename TData>
-void TList<TKey, TData>::InsertBegin(TKey _newKey, TData* _data)
+void TList<TKey, TData>::InsertBegin(TKey _newKey, TData _data)
 {
   if (pFirst == nullptr)
   {
@@ -108,7 +108,7 @@ void TList<TKey, TData>::InsertBegin(TKey _newKey, TData* _data)
 }
 
 template <typename TKey, typename TData>
-void TList<TKey, TData>::InsertEnd(TKey _newKey, TData* _data)
+void TList<TKey, TData>::InsertEnd(TKey _newKey, TData _data)
 {
   if (pFirst == nullptr)
   {
@@ -128,7 +128,7 @@ void TList<TKey, TData>::InsertEnd(TKey _newKey, TData* _data)
 }
 
 template <typename TKey, typename TData>
-void TList<TKey, TData>::InsertBefore(TKey _key, TKey _newKey, TData* _data)
+void TList<TKey, TData>::InsertBefore(TKey _key, TKey _newKey, TData _data)
 {
   if (pFirst == nullptr) return;
   if (pFirst->key == _key)
@@ -157,7 +157,7 @@ void TList<TKey, TData>::InsertBefore(TKey _key, TKey _newKey, TData* _data)
 }
 
 template <typename TKey, typename TData>
-void TList<TKey, TData>::InsertAfter(TKey _key, TKey _newKey, TData* _data)
+void TList<TKey, TData>::InsertAfter(TKey _key, TKey _newKey, TData _data)
 {
   if (pFirst == nullptr) return;
   TNode<TKey, TData>* previousNode = pFirst;
@@ -274,7 +274,7 @@ TData TList<TKey, TData>::getCurrentNodeData() const
     //ExceptionEmptyList e(__LINE__, __FILE__);     //TODO: right name of exception
     //throw e;
   }
-  return *(pCurrent->pData);
+  return pCurrent->pData;
 }
 
 template <typename TKey, typename TData>
