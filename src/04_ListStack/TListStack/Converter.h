@@ -13,17 +13,20 @@ private:
   TStack<std::string>* stackOfOperands;
   TStack<double>* result;
 
+  std::string postfixForm;
+  Variables variables;
+
   int getPriorityOfOperator(const char _operator);
 
 public:
-  std::string *operands;
-  std::string postfixForm;
-
   explicit Converter(bool _isTListStack = false);
   ~Converter();
 
+  std::string GetPostfixForm() const { return postfixForm; }
+
   std::string ConvertToPostfixForm(const std::string& _expression);
-  double Calculate(const std::string& _postfixForm, const Variables & _var);
+  Variables GetOperands();
+  double Calculate();
 };
 
 #endif // !__CONVERTER_H__

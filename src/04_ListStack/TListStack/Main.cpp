@@ -104,9 +104,10 @@ void _tStackMain(bool _isTListStack = false)
     Converter tmp(_isTListStack);
     std::cout << "Postfix form: " << tmp.ConvertToPostfixForm(buffer) << std::endl;
 
-    Variables var(tmp.operands);
+    //Variables var = tmp.GetOperands();
+    tmp.GetOperands().setValues();
 
-    double result = tmp.Calculate(tmp.postfixForm, var);
+    double result = tmp.Calculate();
     std::cout << "Result: " << result << std::endl << std::endl;
   }
   catch (MyException const& e)

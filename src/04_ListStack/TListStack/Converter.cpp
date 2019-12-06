@@ -1,4 +1,5 @@
 #include "Converter.h"
+#include "string"
 #define TARRAYSTACK_MAX_SIZE 1024
 
 std::string Converter::ConvertToPostfixForm(const std::string & _expression)
@@ -167,34 +168,67 @@ std::string Converter::ConvertToPostfixForm(const std::string & _expression)
   }
 
   {
-    Converter::operands = new std::string[countOfOperands + 1]; //1 for " ", then we can forgot count of operands
+    variables.operands = new std::string[countOfOperands + 1]; //1 for " ", then we can forgot count of operands
     for (int i = 0; i < countOfOperands; i++)
-      Converter::operands[i] = _operands[i];
-    Converter::operands[countOfOperands] = " "; //"end of vecror"
+      variables.operands[i] = _operands[i];
+    variables.operands[countOfOperands] = " "; //"end of vecror"
     delete[] _operands;
   }
 
   return postfixForm;
 }
 
-double Converter::Calculate(const std::string & _postfixForm, const Variables& _var)
+Variables Converter::GetOperands()
+{
+  /*
+  int countOfOperands = 0;
+  for (int i = 0; variables.operands[i] != " "; i++)
+    countOfOperands++;
+  //countOfVariables = countOfOperands;
+  variables.values = new double[countOfOperands];
+  //double *values = new double[countOfOperands];
+
+  for (int i = 0; i < countOfOperands; i++)
+  {
+    bool cont = false;
+    for (int j = 0; j < i; j++)
+      if (variables.operands[i] == variables.operands[j]) {
+        variables.values[i] = variables.values[j];
+        cont = true;
+        break;
+      }
+    if (cont) continue;
+
+
+    //(!_str.empty()) && (_str.find_first_not_of("0123456789.") == _str.npos);
+    if ((!variables.operands[i].empty()) && (variables.operands[i].find_first_not_of("0123456789.") == variables.operands[i].npos))
+    //if (isNumber(variables.operands[i]))
+      variables.values[i] = stod(variables.operands[i], 0);
+    else {
+      std::cout << "Set the value of the variable: " << variables[i] << " = ";
+      std::cin >> variables.values[i];
+    }
+  }*/
+  return variables;
+}
+
+double Converter::Calculate()
 {
   std::string tmp;
-
-  for (int i = 0, j = 0; i < _postfixForm.length(); i++)
+  for (int i = 0, j = 0; i < postfixForm.length(); i++)
   {
-    if ((_postfixForm[i] != ' '))
+    if ((postfixForm[i] != ' '))
     {
-      tmp.push_back(_postfixForm[i]);
+      tmp.push_back(postfixForm[i]);
     }
     else
     {
       if ((tmp != "*") && (tmp != "/") && (tmp != "+") && (tmp != "-"))
       {
         int idx = 0;
-        while ((idx < _var.countOfVariables) && (_var.variables[idx++] != tmp));
+        while ((idx < variables.countOfVariables) && (variables.operands[idx++] != tmp));
         idx--;
-        (*result).Push(_var.values[idx]);
+        (*result).Push(variables.values[idx]);
       }
       else if (tmp == "*")
       {
@@ -228,6 +262,7 @@ double Converter::Calculate(const std::string & _postfixForm, const Variables& _
       tmp.clear();
     }
   }
+
   return (*result).Top();
 }
 
@@ -257,7 +292,7 @@ Converter::Converter(bool _isTListStack)
 
 Converter::~Converter()
 {
-  delete[] operands;
+  //delete[] operands;
   delete stackOfOperands;
   delete operators;
   delete result;

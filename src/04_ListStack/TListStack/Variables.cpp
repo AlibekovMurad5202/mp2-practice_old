@@ -1,6 +1,6 @@
 #include "Variables.h"
 
-Variables::Variables(const std::string* _variables)
+/*Variables::Variables(const std::string* _variables)
 {
   int countOfOperands = 0;
   for (int i = 0; _variables[i] != " "; i++)
@@ -30,16 +30,42 @@ Variables::Variables(const std::string* _variables)
       std::cin >> values[i];
     }
   }
+}*/
+
+Variables::Variables()
+{
+
 }
 
 void Variables::setValues()
 {
+  int countOfOperands = 0;
+  for (int i = 0; operands[i] != " "; i++)
+    countOfOperands++;
+  countOfVariables = countOfOperands;
+
+  values = new double[countOfVariables];
+
   for (int i = 0; i < countOfVariables; i++)
   {
-    std::cout << "Set the value of the variable: " << variables[i] << " = ";
-    std::cin >> values[i];
+    bool cont = false;
+    for (int j = 0; j < i; j++)
+      if (operands[i] == operands[j]) {
+        values[i] = values[j];
+        cont = true;
+        break;
+      }
+    if (cont) continue;
+
+    if (isNumber(operands[i]))
+      values[i] = stod(operands[i], 0);
+    else {
+      std::cout << "Set the value of the variable: " << operands[i] << " = ";
+      std::cin >> values[i];
+    }
   }
 }
+
 
 double & Variables::operator[](int index)
 {
@@ -58,8 +84,8 @@ bool Variables::isNumber(const std::string& _str)
 
 Variables::~Variables()
 {
-  if (variables != nullptr)
-    delete[] variables;
+  if (operands != nullptr)
+    delete[] operands;
   if (values != nullptr)
     delete[] values;
 }
