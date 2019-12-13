@@ -9,6 +9,11 @@ protected:
   TList<UINT, double> *monoms;
 
 public:
+
+  //TODO: 
+  //  void Sort();
+  //  Polynom(const std::string& _polynom);
+
   Polynom();
   Polynom(const TList<UINT, double>& _list);
   Polynom(const Polynom& _polynom);

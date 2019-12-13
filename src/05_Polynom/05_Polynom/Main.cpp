@@ -47,6 +47,26 @@ void _tListMain()
   std::cout << "Constructor with only node with key \"12\" and data \"" << words[6] << "\"" << std::endl;
   std::cout << TList<int, std::string>(&TNode<int, std::string>(12, words[6])) << std::endl << std::endl;
 
+
+  std::cout << std::endl << "//-------------//" << std::endl << std::endl;
+
+  TList<unsigned, double> _list1;
+  _list1.InsertEnd(100, 2);
+  _list1.InsertEnd(101, 11);
+  _list1.InsertEnd(128, -8);
+  Polynom tmp1(_list1);
+  std::cout << tmp1 << std::endl << std::endl;
+
+  TList<unsigned, double> _list2;
+  _list2.InsertEnd(103, 22);
+  _list2.InsertEnd(306, 78);
+  Polynom tmp2(_list2);
+  std::cout << tmp2 << std::endl << std::endl;
+
+  std::cout << (tmp1 + tmp2) << std::endl << std::endl;
+
+  std::cout << std::endl << std::endl << "//-------------//" << std::endl;
+
   try
   {
     std::cout << "Insert \"" << words[0] << "\" after node with key 666:";
