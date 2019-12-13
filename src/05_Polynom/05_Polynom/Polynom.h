@@ -70,33 +70,33 @@ Polynom & Polynom::operator=(const Polynom& _polynom)
 Polynom Polynom::operator+(const Polynom& _polynom) const
 {
   Polynom result;
-  _polynom.monoms->Reset();
-  monoms->Reset();
-  while (!monoms->IsEnded() || !_polynom.monoms->IsEnded())
+  Polynom p1(*this);
+  Polynom p2(_polynom);
+  p2.monoms->Reset();
+  p1.monoms->Reset();
+  while (!p1.monoms->IsEnded() || !p2.monoms->IsEnded())
   {
-    Monom m1(monoms->getCurrentNodeKey(), monoms->getCurrentNodeData());
-    Monom m2(_polynom.monoms->getCurrentNodeKey(), _polynom.monoms->getCurrentNodeData());
+    Monom m1(p1.monoms->getCurrentNodeKey(), p1.monoms->getCurrentNodeData());
+    Monom m2(p2.monoms->getCurrentNodeKey(), p2.monoms->getCurrentNodeData());
     if (m1.key = m2.key)
     {
       Monom sum = m1 + m2;
       if (sum.data != 000)
         result.monoms->InsertEnd(sum);
-      monoms->Next();
-      _polynom.monoms->Next();
+      p1.monoms->Next();
+      p2.monoms->Next();
     }
     else if (m1.key > m2.key)
     {
       result.monoms->InsertEnd(m2);
-      _polynom.monoms->Next();
+      p2.monoms->Next();
     }
     else
     {
       result.monoms->InsertEnd(m1);
-      monoms->Next();
+      p1.monoms->Next();
     }
   }
-  _polynom.monoms->Reset();
-  monoms->Reset();
   //result.deleteZeros();    //TODO: method in Polynom : deleteZeros()
   return result;
 }
@@ -133,24 +133,22 @@ Polynom Polynom::operator-(const Polynom & _polynom) const
 
 Polynom Polynom::operator-(const Monom& _monom) const
 {
-  return Polynom(Polynom(*this) + Monom(_monom.key, -_monom.data));
+  return (Polynom(*this) + Monom(_monom.key, -_monom.data));
 }
 
 Polynom Polynom::operator*(const Polynom & _polynom) const
 {
   Polynom result;
-  _polynom.monoms->Reset();
-  monoms->Reset();
-  while (!_polynom.monoms->IsEnded())
+  Polynom polynomial(_polynom);
+  polynomial.monoms->Reset();
+  while (!polynomial.monoms->IsEnded())
   {
-    double currentData = _polynom.monoms->getCurrentNodeData();
-    UINT currentKey = _polynom.monoms->getCurrentNodeKey();
+    double currentData = polynomial.monoms->getCurrentNodeData();
+    UINT currentKey = polynomial.monoms->getCurrentNodeKey();
     Polynom tmp(Polynom(*this) * Monom(currentKey, currentData));
     result = result + tmp;
-    _polynom.monoms->Next();
+    polynomial.monoms->Next();
   }
-  _polynom.monoms->Reset();
-  monoms->Reset();
   //result.deleteZeros();    //TODO: method in Polynom : deleteZeros()
   return result;
 }
@@ -158,14 +156,14 @@ Polynom Polynom::operator*(const Polynom & _polynom) const
 Polynom Polynom::operator*(const Monom& _monom) const
 {
   Polynom result;
+  Polynom polynomial(*this);
   if (_monom.data == 0)
     return result;
-  while (!monoms->IsEnded())
+  while (!polynomial.monoms->IsEnded())
   {
-    Monom tmp(monoms->getCurrentNodeKey(), monoms->getCurrentNodeData());
+    Monom tmp(polynomial.monoms->getCurrentNodeKey(), polynomial.monoms->getCurrentNodeData());
     result.monoms->InsertEnd(tmp * _monom);
   }
-  monoms->Reset();
   return result;
 }
 
@@ -173,7 +171,7 @@ std::ostream& operator<<(std::ostream& out, const Polynom& _polynom)
 {
   _polynom.monoms->Reset();
   if (_polynom.monoms->IsEmpty())
-    out << 0;
+    out << " 0 ";
   else 
     while (!_polynom.monoms->IsEnded())
     {
