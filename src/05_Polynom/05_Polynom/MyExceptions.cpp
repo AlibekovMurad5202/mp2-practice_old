@@ -55,6 +55,59 @@ ExceptionWrongExpression::~ExceptionWrongExpression()
   line = -1;
 }
 
+ExceptionDifferentDegrees::ExceptionDifferentDegrees()
+{
+  str_what = "Different degrees of the monoms!";
+  line = -1;
+  file = 0;
+}
+
+ExceptionDifferentDegrees::ExceptionDifferentDegrees(const ExceptionDifferentDegrees& _exception)
+{
+  str_what = _exception.what();
+  line = _exception.errorLine();
+  file = _exception.errorFile();
+}
+
+ExceptionDifferentDegrees::ExceptionDifferentDegrees(int _line, const char* _file)
+{
+  str_what = "Different degrees of the monoms!!";
+  line = _line;
+  file = _file;
+}
+
+ExceptionDifferentDegrees::~ExceptionDifferentDegrees()
+{
+  line = -1;
+}
+
+ExceptionMonomDoesNotExist::ExceptionMonomDoesNotExist()
+{
+  str_what = "Monom does not exist!";
+  line = -1;
+  file = 0;
+}
+
+ExceptionMonomDoesNotExist::ExceptionMonomDoesNotExist(const ExceptionMonomDoesNotExist& _exception)
+{
+  str_what = _exception.what();
+  line = _exception.errorLine();
+  file = _exception.errorFile();
+}
+
+ExceptionMonomDoesNotExist::ExceptionMonomDoesNotExist(int _line, const char* _file)
+{
+  str_what = "Monom does not exist!";
+  line = _line;
+  file = _file;
+}
+
+ExceptionMonomDoesNotExist::~ExceptionMonomDoesNotExist()
+{
+  line = -1;
+}
+
+
 ExceptionNoNodeInList::ExceptionNoNodeInList()
 {
   str_what = "There is not such node!";

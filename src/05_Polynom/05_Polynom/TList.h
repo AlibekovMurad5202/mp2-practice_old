@@ -1,7 +1,8 @@
 #ifndef __TLIST_H__
 #define __TLIST_H__
 #include "MyExceptions.h"
-#include "TNode.h"
+//#include "TNode.h"
+#include "Monom.h"
 
 //~~~~~~~~~~~~~~~~~~~~~~~~ class TList ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//
 
@@ -24,6 +25,11 @@ public:
   void InsertEnd(TKey _newKey, TData _data);
   void InsertBefore(TKey _key, TKey _newKey, TData _data);
   void InsertAfter(TKey _key, TKey _newKey, TData _data);
+
+  void InsertBegin(const TNode<TKey, TData>& _tnode);
+  void InsertEnd(const TNode<TKey, TData>& _tnode);
+  void InsertBefore(TKey _key, const TNode<TKey, TData>& _tnode);
+  void InsertAfter(TKey _key, const TNode<TKey, TData>& _tnode);
 
   void Remove(TKey _key);
 
@@ -70,9 +76,9 @@ TList<TKey, TData>::TList(const TList& _tlist)
 }
 
 template <typename TKey, typename TData>
-TList<TKey, TData>::TList(const TNode<TKey, TData> * _node)
+TList<TKey, TData>::TList(const TNode<TKey, TData> * _tnode)
 {
-  pFirst = new TNode<TKey, TData>(*_node);
+  pFirst = new TNode<TKey, TData>(*_tnode);
   pCurrent = pFirst;
   pPrevious = nullptr;
   pNext = nullptr;
@@ -142,10 +148,7 @@ void TList<TKey, TData>::InsertBefore(TKey _key, TKey _newKey, TData _data)
     previousNode = previousNode->pNext;
   }
   if (previousNode->pNext == nullptr)
-  {
-    ExceptionNoNodeInList e(__LINE__, __FILE__);
-    throw e;
-  }
+    throw ExceptionNoNodeInList(__LINE__, __FILE__);
   TNode<TKey, TData>* nextNode = previousNode->pNext;
   TNode<TKey, TData>* newNode = new TNode<TKey, TData>(_newKey, _data);
   previousNode->pNext = newNode;
@@ -166,10 +169,7 @@ void TList<TKey, TData>::InsertAfter(TKey _key, TKey _newKey, TData _data)
     previousNode = previousNode->pNext;
   }
   if (previousNode == nullptr)
-  {
-    ExceptionNoNodeInList e(__LINE__, __FILE__);
-    throw e;
-  }
+    throw ExceptionNoNodeInList(__LINE__, __FILE__);
   TNode<TKey, TData>* nextNode = previousNode->pNext;
   TNode<TKey, TData>* newNode = new TNode<TKey, TData>(_newKey, _data);
   previousNode->pNext = newNode;
@@ -178,6 +178,30 @@ void TList<TKey, TData>::InsertAfter(TKey _key, TKey _newKey, TData _data)
     pNext = newNode;
   if (pCurrent == nextNode)
     pPrevious = newNode;
+}
+
+template<typename TKey, typename TData>
+void TList<TKey, TData>::InsertBegin(const TNode<TKey, TData>& _tnode)
+{
+  InsertBegin(_tnode.key, _tnode.data);
+}
+
+template<typename TKey, typename TData>
+void TList<TKey, TData>::InsertEnd(const TNode<TKey, TData>& _tnode)
+{
+  InsertEnd(_tnode.key, _tnode.data);
+}
+
+template<typename TKey, typename TData>
+void TList<TKey, TData>::InsertBefore(TKey _key, const TNode<TKey, TData>& _tnode)
+{
+  InsertBefore(_key, _tnode.key, _tnode.data);
+}
+
+template<typename TKey, typename TData>
+void TList<TKey, TData>::InsertAfter(TKey _key, const TNode<TKey, TData>& _tnode)
+{
+  InsertAfter(_key, _tnode.key, _tnode.data);
 }
 
 template <typename TKey, typename TData>
@@ -201,10 +225,7 @@ void TList<TKey, TData>::Remove(TKey _key)
     previousNode = previousNode->pNext;
   }
   if (previousNode->pNext == nullptr)
-  {
-    ExceptionNoNodeInList e(__LINE__, __FILE__);
-    throw e;
-  }
+    throw ExceptionNoNodeInList(__LINE__, __FILE__);
   TNode<TKey, TData>* nextNode = previousNode->pNext->pNext;
   bool wasRemovingNodeCurrent = (pCurrent == previousNode->pNext);
   bool wasRemovingNodeNext = (pNext == previousNode->pNext);
@@ -242,11 +263,8 @@ bool TList<TKey, TData>::IsEmpty() const
 template <typename TKey, typename TData>
 void TList<TKey, TData>::Next()
 {
-  if (IsEnded() == true)
-  {
-    ExceptionListIsEnded e(__LINE__, __FILE__);
-    throw e;
-  }
+  if (IsEnded() == true) 
+    throw ExceptionListIsEnded(__LINE__, __FILE__);
   pPrevious = pCurrent;
   pCurrent = pNext;
   if (pNext != nullptr)
@@ -274,7 +292,7 @@ TData TList<TKey, TData>::getCurrentNodeData() const
     //ExceptionEmptyList e(__LINE__, __FILE__);     //TODO: right name of exception
     //throw e;
   }
-  return pCurrent->pData;
+  return pCurrent->data;
 }
 
 template <typename TKey, typename TData>

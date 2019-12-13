@@ -32,6 +32,24 @@ public:
   ~ExceptionWrongExpression();
 };
 
+class ExceptionDifferentDegrees : public MyException
+{
+public:
+  ExceptionDifferentDegrees();
+  ExceptionDifferentDegrees(const ExceptionDifferentDegrees& _exception);
+  ExceptionDifferentDegrees(int _line, const char* _file);
+  ~ExceptionDifferentDegrees();
+};
+
+class ExceptionMonomDoesNotExist : public MyException
+{
+public:
+  ExceptionMonomDoesNotExist();
+  ExceptionMonomDoesNotExist(const ExceptionMonomDoesNotExist& _exception);
+  ExceptionMonomDoesNotExist(int _line, const char* _file);
+  ~ExceptionMonomDoesNotExist();
+};
+
 class ExceptionNotPositiveSize : public MyException
 {
 public:

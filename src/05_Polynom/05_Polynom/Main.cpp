@@ -1,4 +1,4 @@
-#include "TList.h"
+#include "Polynom.h"
 #include "stdlib.h"
 #include "string"
 

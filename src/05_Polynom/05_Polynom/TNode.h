@@ -8,13 +8,15 @@ template <typename TKey, typename TData>
 struct TNode
 {
   TKey key;
-  TData pData;
+  TData data;
   TNode* pNext;
 
   TNode();
   TNode(TKey _key, TData _data);
   TNode(const TNode<TKey, TData>& _tnode);
   ~TNode();
+
+  const TNode<TKey, TData>& operator=(const TNode<TKey, TData>& _tnode);
 
   template <typename TKey, typename TData>
   friend std::ostream& operator<<(std::ostream& out, const TNode<TKey, TData>& _tnode);
@@ -25,6 +27,7 @@ struct TNode
 template <typename TKey, typename TData>
 TNode<TKey, TData>::TNode()
 {
+  key = 0;
   pNext = nullptr;
 }
 
@@ -33,25 +36,25 @@ TNode<TKey, TData>::TNode(TKey _key, TData _data)
 {
   pNext = nullptr;
   key = _key;
-  pData = _data;
+  data = _data;
   //if (_data != nullptr)
   //{
-  //  pData = new TData;
-  //  *pData = *_data;
+  //  data = new TData;
+  //  *data = *_data;
   //}
-  //else pData = nullptr;
+  //else data = nullptr;
 }
 
 template <typename TKey, typename TData>
 TNode<TKey, TData>::TNode(const TNode<TKey, TData>& _tnode)
 {
-  //if (_tnode.pData != nullptr)
+  //if (_tnode.data != nullptr)
   //{
-  //  pData = new TData;
-  //  *pData = *_tnode.pData;
+  //  data = new TData;
+  //  *data = *_tnode.data;
   //}
-  //else pData = nullptr;
-  pData = _tnode.pData;
+  //else data = nullptr;
+  data = _tnode.data;
   pNext = nullptr;
   key = _tnode.key;
 }
@@ -59,14 +62,27 @@ TNode<TKey, TData>::TNode(const TNode<TKey, TData>& _tnode)
 template<typename TKey, typename TData>
 TNode<TKey, TData>::~TNode()
 {
-  //if (pData != nullptr)
-  //  delete pData;
+  pNext = nullptr;
+  //delete pNext;
+  //if (data != nullptr)
+  //  delete data;
+}
+
+template<typename TKey, typename TData>
+const TNode<TKey, TData>& TNode<TKey, TData>::operator=(const TNode<TKey, TData>& _tnode)
+{
+  if (this != &_tnode)
+  {
+    key = _tnode.key;
+    data = _tnode.data;
+  }
+  return *this;  
 }
 
 template <typename TKey, typename TData>
 std::ostream& operator<<(std::ostream& out, const TNode<TKey, TData>& node)
 {
-  out << "[" << node.key << " : " << node.pData << "]";
+  out << "[" << node.key << " : " << node.data << "]";
   return out;
 };
 
