@@ -8,42 +8,39 @@
   countOfVariables = countOfOperands;
 
   values = new double[countOfVariables];
-  variables = new std::string[countOfVariables];
+  operands = new std::string[countOfVariables];
 
   for (int i = 0; i < countOfVariables; i++)
   {
-    variables[i] = _variables[i];
+    operands[i] = _variables[i];
 
     bool cont = false;
     for (int j = 0; j < i; j++)
-      if (variables[i] == variables[j]) {
+      if (operands[i] == operands[j]) {
         values[i] = values[j];
         cont = true;
         break;
       }
     if (cont) continue;
 
-    if (isNumber(variables[i]))
-      values[i] = stod(variables[i], 0);
+    if (isNumber(operands[i]))
+      values[i] = stod(operands[i], 0);
     else {
-      std::cout << "Set the value of the variable: " << variables[i] << " = ";
+      std::cout << "Set the value of the variable: " << operands[i] << " = ";
       std::cin >> values[i];
     }
   }
 }*/
 
-Variables::Variables()
+Variables::Variables() 
 {
-
+  countOfVariables = 0;
+  operands = nullptr;
+  values = nullptr;
 }
 
 void Variables::setValues()
 {
-  int countOfOperands = 0;
-  for (int i = 0; operands[i] != " "; i++)
-    countOfOperands++;
-  countOfVariables = countOfOperands;
-
   values = new double[countOfVariables];
 
   for (int i = 0; i < countOfVariables; i++)
@@ -66,7 +63,6 @@ void Variables::setValues()
   }
 }
 
-
 double & Variables::operator[](int index)
 {
   return values[index];
@@ -84,8 +80,6 @@ bool Variables::isNumber(const std::string& _str)
 
 Variables::~Variables()
 {
-  if (operands != nullptr)
-    delete[] operands;
-  if (values != nullptr)
-    delete[] values;
+  if (operands != nullptr) delete[] operands;
+  if (values != nullptr) delete[] values;
 }

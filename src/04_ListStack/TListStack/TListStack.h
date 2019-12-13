@@ -1,7 +1,6 @@
 #ifndef __TLISTSTACK_H__
 #define __TLISTSTACK_H__
 
-
 #include "TStack.h"
 #include "TList.h"
 
@@ -54,22 +53,14 @@ void TListStack<ValType>::Push(ValType element)
 template<typename ValType>
 ValType TListStack<ValType>::Top() const
 {
-  if (IsEmpty())
-  {
-    ExceptionEmptyStack e(__LINE__, __FILE__);
-    throw e;
-  }
+  if (IsEmpty()) throw ExceptionEmptyStack(__LINE__, __FILE__);
   return list->getFirstNodeKey();
 }
 
 template<typename ValType>
 void TListStack<ValType>::Pop()
 {
-  if (IsEmpty())
-  {
-    ExceptionEmptyStack e(__LINE__, __FILE__);
-    throw e;
-  }
+  if (IsEmpty()) throw ExceptionEmptyStack(__LINE__, __FILE__);
   list->Remove(list->getFirstNodeKey());
 }
 

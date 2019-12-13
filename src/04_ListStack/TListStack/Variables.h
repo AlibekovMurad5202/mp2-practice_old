@@ -8,7 +8,7 @@ class Variables
 {
 public:
   int countOfVariables;
-  std::string* operands;//variables;
+  std::string* operands;
   double* values;
 
   //Variables(const std::string* _variables);

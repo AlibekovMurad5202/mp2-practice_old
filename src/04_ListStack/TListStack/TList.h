@@ -141,10 +141,7 @@ void TList<TKey, TData>::InsertBefore(TKey _key, TKey _newKey, TData* _data)
     previousNode = previousNode->pNext;
   }
   if (previousNode->pNext == nullptr)
-  {
-    ExceptionNoNodeInList e(__LINE__, __FILE__);
-    throw e;
-  }
+    throw ExceptionNoNodeInList(__LINE__, __FILE__);
   TNode<TKey, TData>* nextNode = previousNode->pNext;
   TNode<TKey, TData>* newNode = new TNode<TKey, TData>(_newKey, _data);
   previousNode->pNext = newNode;

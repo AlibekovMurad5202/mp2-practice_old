@@ -22,10 +22,10 @@ public:
   explicit Converter(bool _isTListStack = false);
   ~Converter();
 
-  std::string GetPostfixForm() const { return postfixForm; }
+  std::string GetPostfixForm() const;
+  void setVariables();
 
   std::string ConvertToPostfixForm(const std::string& _expression);
-  Variables GetOperands();
   double Calculate();
 };
 

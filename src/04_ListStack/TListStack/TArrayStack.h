@@ -30,11 +30,7 @@ template<typename ValType>
 TArrayStack<ValType>::TArrayStack(int _size)
   : size(_size), head(0)
 {
-  if (size <= 0)
-  {
-    ExceptionNotPositiveSize e(__LINE__, __FILE__);
-    throw e;
-  }
+  if (size <= 0) throw ExceptionNotPositiveSize(__LINE__, __FILE__);
   elems = new ValType[size];
 }
 
@@ -56,33 +52,21 @@ TArrayStack<ValType>::~TArrayStack()
 template<typename ValType>
 void TArrayStack<ValType>::Push(ValType element)
 {
-  if (IsFull())
-  {
-    ExceptionFullStack e(__LINE__, __FILE__);
-    throw e;
-  }
+  if (IsFull()) throw ExceptionFullStack(__LINE__, __FILE__);
   elems[head++] = element;
 }
 
 template<typename ValType>
 ValType TArrayStack<ValType>::Top() const
 {
-  if (IsEmpty())
-  {
-    ExceptionEmptyStack e(__LINE__, __FILE__);
-    throw e;
-  }
+  if (IsEmpty()) throw ExceptionEmptyStack(__LINE__, __FILE__);
   return elems[head - 1];
 }
 
 template<typename ValType>
 void TArrayStack<ValType>::Pop()
 {
-  if (IsEmpty())
-  {
-    ExceptionEmptyStack e(__LINE__, __FILE__);
-    throw e;
-  }
+  if (IsEmpty()) throw ExceptionEmptyStack(__LINE__, __FILE__);
   --head;
 }
 

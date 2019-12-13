@@ -1,6 +1,15 @@
 #include "Converter.h"
-#include "string"
 #define TARRAYSTACK_MAX_SIZE 1024
+
+std::string Converter::GetPostfixForm() const
+{
+  return postfixForm;
+}
+
+void Converter::setVariables()
+{
+  variables.setValues();
+}
 
 std::string Converter::ConvertToPostfixForm(const std::string & _expression)
 {
@@ -23,15 +32,13 @@ std::string Converter::ConvertToPostfixForm(const std::string & _expression)
         || (_expression[i] == '(') || (_expression[i] == ')')
         || (_expression[i] == ' '))
       {
+        variables.countOfVariables++;
         countOfOperands++;
-        (*stackOfOperands).Push(buffer);
+        stackOfOperands->Push(buffer);
         {
           int k = 0;
-          while ((k < indexOfOperand) &&
-            (_operands[k++] != _operands[indexOfOperand])) {
-          };
-          if (k == indexOfOperand)
-            _operands[indexOfOperand++] = buffer;
+          while ((k < indexOfOperand) && (_operands[k++] != _operands[indexOfOperand])) {};
+          if (k == indexOfOperand) _operands[indexOfOperand++] = buffer;
         }
         buffer.clear();
       }
@@ -42,24 +49,18 @@ std::string Converter::ConvertToPostfixForm(const std::string & _expression)
       && (_expression[i] != '*') && (_expression[i] != '/')
       && (_expression[i] != '(') && (_expression[i] != ')'))
     {
-      if (countOfOperands == (countOfOperators + 1))
-      {
-        ExceptionWrongExpression ex(__LINE__, __FILE__);
-        throw ex;
-      }
+      if (countOfOperands == countOfOperators + 1)
+        throw ExceptionWrongExpression(__LINE__, __FILE__);
 
       buffer.push_back(_expression[i]);
-      if (i == (lengthOfExpression - 1))
+      if (i == lengthOfExpression - 1)
       {
         countOfOperands++;
-        (*stackOfOperands).Push(buffer);
+        stackOfOperands->Push(buffer);
         {
           int k = 0;
-          while ((k < indexOfOperand) &&
-            (_operands[k++] != _operands[indexOfOperand])) {
-          };
-          if (k == indexOfOperand)
-            _operands[indexOfOperand++] = buffer;
+          while ((k < indexOfOperand) && (_operands[k++] != _operands[indexOfOperand])) {};
+          if (k == indexOfOperand) _operands[indexOfOperand++] = buffer;
         }
         buffer.clear();
       }
@@ -69,67 +70,57 @@ std::string Converter::ConvertToPostfixForm(const std::string & _expression)
       if ((lastSymbol != '+') && (lastSymbol != '-')
         && (lastSymbol != '*') && (lastSymbol != '/')
         && (lastSymbol != ' ') && (lastSymbol != '(')
-        && (lastSymbol != 0))
-      {
-        ExceptionWrongExpression ex(__LINE__, __FILE__);
-        throw ex;
-      }
+        && (lastSymbol != 0)) 
+        throw ExceptionWrongExpression(__LINE__, __FILE__);
       countOfLeftBrackets++;
-      (*operators).Push(_expression[i]);
+      operators->Push(_expression[i]);
     }
     else if (_expression[i] == ')')
     {
       if ((lastSymbol == '+') || (lastSymbol == '-')
         || (lastSymbol == '*') || (lastSymbol == '/')
         || (lastSymbol == '('))
-      {
-        ExceptionWrongExpression ex(__LINE__, __FILE__);
-        throw ex;
-      }
+        throw ExceptionWrongExpression(__LINE__, __FILE__);
       countOfRightBrackets++;
-      while ((*operators).Top() != '(')
+      while (operators->Top() != '(')
       {
         std::string tmp;
         try
         {
-          tmp.push_back((*operators).Top());
-          (*operators).Pop();
-          (*stackOfOperands).Push(tmp);
+          tmp.push_back(operators->Top());
+          operators->Pop();
+          stackOfOperands->Push(tmp);
         }
-        catch (ExceptionEmptyStack const& e)
+        catch (ExceptionEmptyStack const&)
         {
-          ExceptionWrongExpression ex(__LINE__, __FILE__);
-          throw ex;
+          throw ExceptionWrongExpression(__LINE__, __FILE__);
         }
       }
-      (*operators).Pop();
+      operators->Pop();
     }
-    else if ((*operators).IsEmpty())
+    else if (operators->IsEmpty())
     {
       if (lastSymbol == 0)
-      {
-        ExceptionWrongExpression ex(__LINE__, __FILE__);
-        throw ex;
-      }
-      (*operators).Push(_expression[i]);
+        throw ExceptionWrongExpression(__LINE__, __FILE__);
+      operators->Push(_expression[i]);
       countOfOperators++;
     }
-    else if (getPriorityOfOperator(_expression[i]) > getPriorityOfOperator((*operators).Top()))
+    else if (getPriorityOfOperator(_expression[i]) > getPriorityOfOperator(operators->Top()))
     {
-      (*operators).Push(_expression[i]);
+      operators->Push(_expression[i]);
       countOfOperators++;
     }
     else
     {
-      while ((!(*operators).IsEmpty()) && ((*operators).Top() != '(')
-        && (getPriorityOfOperator(_expression[i]) <= getPriorityOfOperator((*operators).Top())))
+      while ((!operators->IsEmpty()) && (operators->Top() != '(')
+        && (getPriorityOfOperator(_expression[i]) <= getPriorityOfOperator(operators->Top())))
       {
         std::string tmp;
-        tmp.push_back((*operators).Top());
-        (*operators).Pop();
-        (*stackOfOperands).Push(tmp);
+        tmp.push_back(operators->Top());
+        operators->Pop();
+        stackOfOperands->Push(tmp);
       }
-      (*operators).Push(_expression[i]);
+      operators->Push(_expression[i]);
       countOfOperators++;
     }
 
@@ -139,22 +130,19 @@ std::string Converter::ConvertToPostfixForm(const std::string & _expression)
 
   if ((countOfOperands != countOfOperators + 1)
     || (countOfLeftBrackets != countOfRightBrackets))
-  {
-    ExceptionWrongExpression e(__LINE__, __FILE__);
-    throw e;
-  }
+    throw ExceptionWrongExpression(__LINE__, __FILE__);
 
-  while (!(*operators).IsEmpty())
+  while (!operators->IsEmpty())
   {
     std::string tmp;
-    tmp.push_back((*operators).Top());
-    (*operators).Pop();
-    (*stackOfOperands).Push(tmp);
+    tmp.push_back(operators->Top());
+    operators->Pop();
+    stackOfOperands->Push(tmp);
   }
 
   TArrayStack<std::string> reverseStackOfOperands(lengthOfExpression);
-  for (; !(*stackOfOperands).IsEmpty(); (*stackOfOperands).Pop())
-    reverseStackOfOperands.Push((*stackOfOperands).Top());
+  for (; !stackOfOperands->IsEmpty(); stackOfOperands->Pop())
+    reverseStackOfOperands.Push(stackOfOperands->Top());
 
   int startPosition = 0;
 
@@ -167,49 +155,13 @@ std::string Converter::ConvertToPostfixForm(const std::string & _expression)
     postfixForm.insert(postfixForm.length(), buffer);
   }
 
-  {
-    variables.operands = new std::string[countOfOperands + 1]; //1 for " ", then we can forgot count of operands
-    for (int i = 0; i < countOfOperands; i++)
-      variables.operands[i] = _operands[i];
-    variables.operands[countOfOperands] = " "; //"end of vecror"
-    delete[] _operands;
-  }
-
-  return postfixForm;
-}
-
-Variables Converter::GetOperands()
-{
-  /*
-  int countOfOperands = 0;
-  for (int i = 0; variables.operands[i] != " "; i++)
-    countOfOperands++;
-  //countOfVariables = countOfOperands;
-  variables.values = new double[countOfOperands];
-  //double *values = new double[countOfOperands];
-
+  variables.countOfVariables = countOfOperands;
+  variables.operands = new std::string[countOfOperands];
   for (int i = 0; i < countOfOperands; i++)
-  {
-    bool cont = false;
-    for (int j = 0; j < i; j++)
-      if (variables.operands[i] == variables.operands[j]) {
-        variables.values[i] = variables.values[j];
-        cont = true;
-        break;
-      }
-    if (cont) continue;
-
-
-    //(!_str.empty()) && (_str.find_first_not_of("0123456789.") == _str.npos);
-    if ((!variables.operands[i].empty()) && (variables.operands[i].find_first_not_of("0123456789.") == variables.operands[i].npos))
-    //if (isNumber(variables.operands[i]))
-      variables.values[i] = stod(variables.operands[i], 0);
-    else {
-      std::cout << "Set the value of the variable: " << variables[i] << " = ";
-      std::cin >> variables.values[i];
-    }
-  }*/
-  return variables;
+    variables.operands[i] = _operands[i];
+  delete[] _operands;
+  
+  return postfixForm;
 }
 
 double Converter::Calculate()
@@ -228,42 +180,37 @@ double Converter::Calculate()
         int idx = 0;
         while ((idx < variables.countOfVariables) && (variables.operands[idx++] != tmp));
         idx--;
-        (*result).Push(variables.values[idx]);
+        result->Push(variables.values[idx]);
       }
       else if (tmp == "*")
       {
-        double b = (*result).Top(); (*result).Pop();
-        double a = (*result).Top(); (*result).Pop();
-        (*result).Push(a * b);
+        double b = result->Top(); result->Pop();
+        double a = result->Top(); result->Pop();
+        result->Push(a * b);
       }
       else if (tmp == "/")
       {
-        double b = (*result).Top(); (*result).Pop();
-        double a = (*result).Top(); (*result).Pop();
-        if (b == 0)
-        {
-          ExceptionDivisionByZero e(__LINE__, __FILE__);
-          throw e;
-        }
-        (*result).Push(a / b);
+        double b = result->Top(); result->Pop();
+        double a = result->Top(); result->Pop();
+        if (b == 0) throw ExceptionDivisionByZero(__LINE__, __FILE__);
+        result->Push(a / b);
       }
       else if (tmp == "+")
       {
-        double b = (*result).Top(); (*result).Pop();
-        double a = (*result).Top(); (*result).Pop();
-        (*result).Push(a + b);
+        double b = result->Top(); result->Pop();
+        double a = result->Top(); result->Pop();
+        result->Push(a + b);
       }
       else if (tmp == "-")
       {
-        double b = (*result).Top(); (*result).Pop();
-        double a = (*result).Top(); (*result).Pop();
-        (*result).Push(a - b);
+        double b = result->Top(); result->Pop();
+        double a = result->Top(); result->Pop();
+        result->Push(a - b);
       }
       tmp.clear();
     }
   }
-
-  return (*result).Top();
+  return result->Top();
 }
 
 int Converter::getPriorityOfOperator(const char _operator)
@@ -292,7 +239,6 @@ Converter::Converter(bool _isTListStack)
 
 Converter::~Converter()
 {
-  //delete[] operands;
   delete stackOfOperands;
   delete operators;
   delete result;
