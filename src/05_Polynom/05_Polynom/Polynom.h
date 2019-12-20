@@ -2,6 +2,8 @@
 #define __POLYNOM_H__
 
 #include "TList.h"
+#include "string"
+#include "iostream"
 
 class Polynom
 {
@@ -31,7 +33,7 @@ public:
   Polynom operator*(const Monom& _monom) const;
 
   friend std::ostream& operator<<(std::ostream& out, const Polynom& _polynom);
-  //friend std::istream& operator>>(std::istream& in, Polynom& _polynom);
+  friend std::istream& operator>>(std::istream& in, Polynom& _polynom);
 };
 
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//
@@ -133,7 +135,7 @@ Polynom Polynom::operator+(const Monom& _monom) const
 
 Polynom Polynom::operator-(const Polynom & _polynom) const
 {
-  return (Polynom(*this) + _polynom * Monom(000, -1));
+  return (Polynom(*this) + _polynom * (-1.));
 }
 
 Polynom Polynom::operator-(const Monom& _monom) const
@@ -184,6 +186,77 @@ std::ostream& operator<<(std::ostream& out, const Polynom& _polynom)
       _polynom.monoms->Next();
     }
   return out;
+}
+
+std::istream& operator>>(std::istream& in, Polynom& _polynom)
+{
+  delete _polynom.monoms;
+  _polynom.monoms = new TList<UINT, double>;
+
+  //Monom zero(000, 0);
+
+  std::string line;
+  std::getline(in, line);
+  std::string buffer;
+  int lengthOfExpression = line.length();
+  if (lengthOfExpression == 0)
+  {
+    _polynom = _polynom + (0);//+ 0.;//+ zero;
+    return in;
+  }
+
+  while (lengthOfExpression)
+  {
+    char _sign = '+';   // '+' ~ 43; '-' ~ 45
+    int start;
+    int end;
+    std::string s_monom;
+    enum Prev { sign, monom, other } p;
+    p = Prev::other;
+
+    for (int i = 0; i < lengthOfExpression; i++)
+    {
+      if (line[i] == ' ');
+      else if ((line[i] == '+') || (line[i] == '-'))
+      {
+        if (p == Prev::sign)
+          throw ExceptionWrongExpression(__LINE__, __FILE__);
+        p = Prev::sign;
+        _sign = line[i];
+      }
+      else if ((line[i] == 'x') || (line[i] == 'y') || (line[i] == 'z')
+        || (('0' <= line[i]) && (line[i] <= '9')))
+      {
+        if (p == Prev::monom)
+          throw ExceptionWrongExpression(__LINE__, __FILE__);
+        p = Prev::monom;
+        start = i;
+        for (end = i; ((line[i] != '+') && (line[i] != '-') && (i < lengthOfExpression)); end++);
+        break;
+      }
+      else throw ExceptionWrongExpression(__LINE__, __FILE__);
+    }
+
+    s_monom = line.substr(start, end - start + 1);
+    _polynom = _polynom + Monom().convert(s_monom) * (44 - _sign);
+    line = line.substr(end + 1, lengthOfExpression - end);
+    lengthOfExpression = line.length();
+  }
+  //for (int i = 0; i < lengthOfExpression; i++)
+  //{
+  //  std::string s_monom;
+  //  //if (buffer.length() == 0)
+  //  //  continue;
+  //  if ();
+  //    
+  //  s_monom = line.substr(start, end - start + 1);
+
+  //  _polynom = _polynom + Monom().convert(s_monom) * (44 - _sign);
+  //  line = line.substr(end + 1, lengthOfExpression - end);
+  //  i = 0;
+  //  lengthOfExpression = line.length();
+  //}
+  return in;
 }
 
 #endif // !__POLYNOM_H__

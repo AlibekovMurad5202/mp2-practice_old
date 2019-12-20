@@ -3,6 +3,8 @@
 
 #include "TNode.h"
 #include "MyExceptions.h"
+#include "iostream"
+#include "string"
 
 #define MAX_KEY 999
 #define MAX_DEGREE 9
@@ -21,6 +23,8 @@ struct Monom// : public TNode<UINT, double>
 
   TNode();
   TNode(UINT _key, double _data);
+  TNode(double _data);
+  //TNode(const std::string& _monom);
   TNode(const Monom& _monom);
   ~TNode();
 
@@ -31,7 +35,7 @@ struct Monom// : public TNode<UINT, double>
   Monom operator*(const Monom& _monom);
 
   friend std::ostream& operator<<(std::ostream& out, const Monom& _monom);
-
+  static Monom convert(const std::string& _monom);
 };
 
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//
@@ -50,10 +54,167 @@ Monom::TNode(UINT _key, double _data)
   pNext = nullptr;
 }
 
+Monom::TNode(double _data)
+  : key(000), data(_data), pNext(nullptr)
+{
+}
+
 Monom::TNode(const Monom& _monom)
   : key(_monom.key), data(_monom.data), pNext(nullptr)
 {
 }
+
+//Monom::TNode(const std::string& _monom)
+//  : pNext(nullptr)
+//{
+//  std::string new_monom;
+//  for (int i = 0; i < _monom.length(); i++)
+//    if (_monom[i] != ' ')
+//      new_monom.push_back(_monom[i]);
+//  std::string coef;
+//  UINT x_degree = 0;
+//  UINT y_degree = 0;
+//  UINT z_degree = 0;
+//
+//  int j = 0;
+//  if ((new_monom[j] == 'x') || (new_monom[j] == 'y') || (new_monom[j] == 'z'))
+//    coef.push_back('1');
+//  else
+//    while ((new_monom[j] != 'x') && (new_monom[j] != 'y')
+//      && (new_monom[j] != 'z') && (new_monom.length() - j))
+//      coef.push_back(new_monom[j++]);
+//
+//  if ((!coef.empty()) && (coef.find_first_not_of("0123456789.") == coef.npos))
+//    data = std::stod(coef);
+//  else throw ExceptionWrongExpression(__LINE__, __FILE__);
+//
+//  for (int i = j; i < new_monom.length(); i++)
+//  {
+//    //if (coef.length() != 0)
+//    //{
+//    //  if ((new_monom[i] == '^') || (new_monom[i] == 'x')
+//    //    || (new_monom[i] == 'y') || (new_monom[i] == 'z'))
+//    //  {
+//    //    data = std::stod(coef);
+//    //    coef.clear();
+//    //  }
+//    //}
+//    switch (new_monom[i])
+//    {
+//    case 'x': 
+//    {
+//      if (new_monom[i + 1] == '^')
+//        if ((48 <= new_monom[i + 2]) && (new_monom[i + 2] <= 57))
+//          if (x_degree + new_monom[i + 2] - 48 > 9)
+//            throw ExceptionMonomDoesNotExist(__LINE__, __FILE__);
+//          else
+//          {
+//            x_degree += new_monom[i + 2] - 48;
+//            i += 2;
+//          }
+//        else throw ExceptionWrongExpression(__LINE__, __FILE__);
+//      else
+//        if ((new_monom[i + 1] == 'y') || (new_monom[i + 1] == 'z'))
+//          if (x_degree + 1 > 9)
+//            throw ExceptionMonomDoesNotExist(__LINE__, __FILE__);
+//          else x_degree++;
+//        else throw ExceptionMonomDoesNotExist(__LINE__, __FILE__);
+//      break;
+//    }
+//    case 'y':
+//    {
+//      if (new_monom[i + 1] == '^')
+//        if ((48 <= new_monom[i + 2]) && (new_monom[i + 2] <= 57))
+//          if (y_degree + new_monom[i + 2] - 48 > 9)
+//            throw ExceptionMonomDoesNotExist(__LINE__, __FILE__);
+//          else 
+//          {
+//            y_degree += new_monom[i + 2] - 48;
+//            i += 2;
+//          }
+//        else throw ExceptionWrongExpression(__LINE__, __FILE__);
+//      else
+//        if ((new_monom[i + 1] == 'x') || (new_monom[i + 1] == 'z'))
+//          if (y_degree + 1 > 9)
+//            throw ExceptionMonomDoesNotExist(__LINE__, __FILE__);
+//          else y_degree++;
+//        else throw ExceptionMonomDoesNotExist(__LINE__, __FILE__);
+//      break;
+//    }
+//    case 'z':
+//    {
+//      if (new_monom[i + 1] == '^')
+//        if ((48 <= new_monom[i + 2]) && (new_monom[i + 2] <= 57))
+//          if (z_degree + new_monom[i + 2] - 48 > 9)
+//            throw ExceptionMonomDoesNotExist(__LINE__, __FILE__);
+//          else 
+//          {
+//            z_degree += new_monom[i + 2] - 48;
+//            i += 2;
+//          }
+//        else throw ExceptionWrongExpression(__LINE__, __FILE__);
+//      else
+//        if ((new_monom[i + 1] == 'x') || (new_monom[i + 1] == 'y'))
+//          if (z_degree + 1 > 9)
+//            throw ExceptionMonomDoesNotExist(__LINE__, __FILE__);
+//          else z_degree++;
+//        else throw ExceptionMonomDoesNotExist(__LINE__, __FILE__);
+//      break;
+//    }
+//    default: throw ExceptionWrongExpression(__LINE__, __FILE__);
+//      break;
+//    }
+//    
+//    /*if (new_monom[i] == 'x')
+//    {
+//      if (new_monom[i + 1] == '^')
+//        if ((48 <= new_monom[i + 2]) && (new_monom[i + 2] <= 57))
+//          if (x_degree + new_monom[i + 2] - 48 > 9)
+//            throw ExceptionMonomDoesNotExist(__LINE__, __FILE__);
+//          else x_degree += new_monom[i + 2] - 48;
+//        else throw ExceptionWrongExpression(__LINE__, __FILE__);
+//      else
+//        if ((new_monom[i + 1] == 'y') || (new_monom[i + 1] == 'z'))
+//          if (x_degree + 1 > 9)
+//            throw ExceptionMonomDoesNotExist(__LINE__, __FILE__);
+//          else x_degree++;
+//        else throw ExceptionMonomDoesNotExist(__LINE__, __FILE__);
+//    }
+//    if (new_monom[i] == 'y')
+//    {
+//      if (new_monom[i + 1] == '^')
+//        if ((48 <= new_monom[i + 2]) && (new_monom[i + 2] <= 57))
+//          if (y_degree + new_monom[i + 2] - 48 > 9)
+//            throw ExceptionMonomDoesNotExist(__LINE__, __FILE__);
+//          else y_degree += new_monom[i + 2] - 48;
+//        else throw ExceptionWrongExpression(__LINE__, __FILE__);
+//      else
+//        if ((new_monom[i + 1] == 'x') || (new_monom[i + 1] == 'z'))
+//          if (y_degree + 1 > 9)
+//            throw ExceptionMonomDoesNotExist(__LINE__, __FILE__);
+//          else y_degree++;
+//        else throw ExceptionMonomDoesNotExist(__LINE__, __FILE__);
+//    }
+//    if (new_monom[i] == 'z')
+//    {
+//      if (new_monom[i + 1] == '^')
+//        if ((48 <= new_monom[i + 2]) && (new_monom[i + 2] <= 57))
+//          if (z_degree + new_monom[i + 2] - 48 > 9)
+//            throw ExceptionMonomDoesNotExist(__LINE__, __FILE__);
+//          else z_degree += new_monom[i + 2] - 48;
+//        else throw ExceptionWrongExpression(__LINE__, __FILE__);
+//      else
+//        if ((new_monom[i + 1] == 'x') || (new_monom[i + 1] == 'y'))
+//          if (z_degree + 1 > 9)
+//            throw ExceptionMonomDoesNotExist(__LINE__, __FILE__);
+//          else z_degree++;
+//        else throw ExceptionMonomDoesNotExist(__LINE__, __FILE__);
+//    }*/
+//  }
+//
+//  key = x_degree * 100 + y_degree * 10 + z_degree;
+//
+//}
 
 Monom::~TNode()
 {
@@ -91,6 +252,104 @@ Monom Monom::operator*(const Monom& _monom)
     || (key % 10 + _monom.key % 10 > MAX_DEGREE))
     throw ExceptionMonomDoesNotExist(__LINE__, __FILE__);
   return Monom(key + _monom.key, data * _monom.data);
+}
+
+Monom Monom::convert(const std::string & _monom)
+{
+  UINT key;
+  double data;
+   
+  std::string new_monom;
+  for (int i = 0; i < _monom.length(); i++)
+    if ((_monom[i] != ' ') && (_monom[i] != '*'))
+      new_monom.push_back(_monom[i]);
+  std::string coef;
+  UINT x_degree = 0;
+  UINT y_degree = 0;
+  UINT z_degree = 0;
+
+  int j = 0;
+  if ((new_monom[j] == 'x') || (new_monom[j] == 'y') || (new_monom[j] == 'z'))
+    coef.push_back('1');
+  else
+    while ((new_monom[j] != 'x') && (new_monom[j] != 'y')
+      && (new_monom[j] != 'z') && (new_monom.length() - j))
+      coef.push_back(new_monom[j++]);
+
+  if ((!coef.empty()) && (coef.find_first_not_of("0123456789.") == coef.npos))
+    data = std::stod(coef);
+  else throw ExceptionWrongExpression(__LINE__, __FILE__);
+
+  for (int i = j; i < new_monom.length(); i++)
+  {
+    switch (new_monom[i])
+    {
+    case 'x':
+    {
+      if (new_monom[i + 1] == '^')
+        if (('0' <= new_monom[i + 2]) && (new_monom[i + 2] <= '9'))
+          if (x_degree + new_monom[i + 2] - '0' > MAX_DEGREE)
+            throw ExceptionMonomDoesNotExist(__LINE__, __FILE__);
+          else
+          {
+            x_degree += new_monom[i + 2] - '0';
+            i += 2;
+          }
+        else throw ExceptionWrongExpression(__LINE__, __FILE__);
+      else
+        if ((new_monom[i + 1] == 'y') || (new_monom[i + 1] == 'z'))
+          if (x_degree + 1 > MAX_DEGREE)
+            throw ExceptionMonomDoesNotExist(__LINE__, __FILE__);
+          else x_degree++;
+        else throw ExceptionMonomDoesNotExist(__LINE__, __FILE__);
+      break;
+    }
+    case 'y':
+    {
+      if (new_monom[i + 1] == '^')
+        if (('0' <= new_monom[i + 2]) && (new_monom[i + 2] <= '9'))
+          if (y_degree + new_monom[i + 2] - '0' > MAX_DEGREE)
+            throw ExceptionMonomDoesNotExist(__LINE__, __FILE__);
+          else
+          {
+            y_degree += new_monom[i + 2] - '0';
+            i += 2;
+          }
+        else throw ExceptionWrongExpression(__LINE__, __FILE__);
+      else
+        if ((new_monom[i + 1] == 'x') || (new_monom[i + 1] == 'z'))
+          if (y_degree + 1 > MAX_DEGREE)
+            throw ExceptionMonomDoesNotExist(__LINE__, __FILE__);
+          else y_degree++;
+        else throw ExceptionMonomDoesNotExist(__LINE__, __FILE__);
+      break;
+    }
+    case 'z':
+    {
+      if (new_monom[i + 1] == '^')
+        if (('0' <= new_monom[i + 2]) && (new_monom[i + 2] <= '9'))
+          if (z_degree + new_monom[i + 2] - '0' > MAX_DEGREE)
+            throw ExceptionMonomDoesNotExist(__LINE__, __FILE__);
+          else
+          {
+            z_degree += new_monom[i + 2] - '0';
+            i += 2;
+          }
+        else throw ExceptionWrongExpression(__LINE__, __FILE__);
+      else
+        if ((new_monom[i + 1] == 'x') || (new_monom[i + 1] == 'y'))
+          if (z_degree + 1 > MAX_DEGREE)
+            throw ExceptionMonomDoesNotExist(__LINE__, __FILE__);
+          else z_degree++;
+        else throw ExceptionMonomDoesNotExist(__LINE__, __FILE__);
+      break;
+    }
+    default: throw ExceptionWrongExpression(__LINE__, __FILE__);
+      break;
+    }
+  }
+  key = x_degree * 100 + y_degree * 10 + z_degree;
+  return Monom(key, data);
 }
 
 std::ostream& operator<<(std::ostream& out, const Monom& _monom)
