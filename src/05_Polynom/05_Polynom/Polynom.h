@@ -83,8 +83,12 @@ Polynom Polynom::operator+(const Polynom& _polynom) const
   p1.monoms->Reset();
   while (!p1.monoms->IsEnded() || !p2.monoms->IsEnded())
   {
-    Monom m1(p1.monoms->getCurrentNodeKey(), p1.monoms->getCurrentNodeData());
-    Monom m2(p2.monoms->getCurrentNodeKey(), p2.monoms->getCurrentNodeData());
+    Monom m1;
+    Monom m2;
+    if (!p1.monoms->IsEnded())
+      m1 = Monom(p1.monoms->getCurrentNodeKey(), p1.monoms->getCurrentNodeData());
+    if (!p2.monoms->IsEnded())
+      m2 = Monom(p2.monoms->getCurrentNodeKey(), p2.monoms->getCurrentNodeData());
     if (m1.key = m2.key)
     {
       Monom sum = m1 + m2;
@@ -110,6 +114,12 @@ Polynom Polynom::operator+(const Polynom& _polynom) const
 
 Polynom Polynom::operator+(const Monom& _monom) const
 {
+  if (this->monoms->IsEmpty())
+  {
+    TList<UINT, double> tmp;
+    tmp.InsertBegin(000, 0);
+    return Polynom(tmp);
+  }
   Polynom result(*this);
   UINT currentKey = result.monoms->getCurrentNodeKey();
   while ((currentKey < _monom.key) && (!result.monoms->IsEnded()))
@@ -199,11 +209,11 @@ std::istream& operator>>(std::istream& in, Polynom& _polynom)
   std::getline(in, line);
   std::string buffer;
   int lengthOfExpression = line.length();
-  if (lengthOfExpression == 0)
-  {
+  //if (lengthOfExpression == 0)
+  //{
     _polynom = _polynom + (0);//+ 0.;//+ zero;
-    return in;
-  }
+    //return in;
+  //}
 
   while (lengthOfExpression)
   {
@@ -231,13 +241,14 @@ std::istream& operator>>(std::istream& in, Polynom& _polynom)
           throw ExceptionWrongExpression(__LINE__, __FILE__);
         p = Prev::monom;
         start = i;
-        for (end = i; ((line[i] != '+') && (line[i] != '-') && (i < lengthOfExpression)); end++);
+        for (end = i; ((line[end] != '+') && (line[end] != '-') && (i < lengthOfExpression)); end++) 
+          std::cout << " " << end;
         break;
       }
       else throw ExceptionWrongExpression(__LINE__, __FILE__);
     }
 
-    s_monom = line.substr(start, end - start + 1);
+    s_monom = line.substr(start, end - start);
     _polynom = _polynom + Monom().convert(s_monom) * (44 - _sign);
     line = line.substr(end + 1, lengthOfExpression - end);
     lengthOfExpression = line.length();

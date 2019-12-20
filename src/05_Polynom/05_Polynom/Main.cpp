@@ -62,8 +62,11 @@ void _tListMain()
   _list2.InsertEnd(306, 78);
   Polynom tmp2(_list2);
   std::cout << tmp2 << std::endl << std::endl;
-
-  std::cout << (tmp1 + tmp2) << std::endl << std::endl;
+  
+  Polynom tmp3;
+  std::cin >> tmp3;
+  std::cout << tmp3;
+  //std::cout << (tmp1 + tmp2) << std::endl << std::endl;
 
   std::cout << std::endl << std::endl << "//-------------//" << std::endl;
 

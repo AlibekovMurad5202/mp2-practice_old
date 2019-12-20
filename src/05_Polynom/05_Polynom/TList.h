@@ -63,6 +63,8 @@ TList<TKey, TData>::TList(const TList& _tlist)
   pFirst = new TNode<TKey, TData>(*(_tlist.pFirst));
   TNode<TKey, TData>* node = pFirst;
   TNode<TKey, TData>* tmp = _tlist.pFirst;
+  if (tmp != nullptr)
+  {
   while (tmp->pNext != nullptr)
   {
     node->pNext = new TNode<TKey, TData>(*(tmp->pNext));
@@ -73,6 +75,8 @@ TList<TKey, TData>::TList(const TList& _tlist)
   pCurrent = pFirst;
   if (pFirst->pNext != nullptr)
     pNext = pFirst->pNext;
+
+  }
 }
 
 template <typename TKey, typename TData>
@@ -278,6 +282,7 @@ TKey TList<TKey, TData>::getCurrentNodeKey() const
 {
   if (pCurrent == nullptr)
   {
+    throw ExceptionNoNodeInList(__LINE__, __FILE__);
     //ExceptionEmptyList e(__LINE__, __FILE__);     //TODO: right name of exception
     //throw e;
   }
@@ -289,6 +294,7 @@ TData TList<TKey, TData>::getCurrentNodeData() const
 {
   if (pCurrent == nullptr)
   {
+    throw ExceptionNoNodeInList(__LINE__, __FILE__);
     //ExceptionEmptyList e(__LINE__, __FILE__);     //TODO: right name of exception
     //throw e;
   }

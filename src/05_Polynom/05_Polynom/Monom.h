@@ -60,8 +60,23 @@ Monom::TNode(double _data)
 }
 
 Monom::TNode(const Monom& _monom)
-  : key(_monom.key), data(_monom.data), pNext(nullptr)
+  //: key(_monom.key), data(_monom.data), pNext(nullptr)
 {
+  if (&_monom != nullptr)
+  {
+  key = _monom.key;
+  data = _monom.data;
+  pNext = nullptr;
+
+  }
+  else
+  {
+    key = 000;
+    data = 0;
+    pNext = nullptr;
+  }
+  //if (_monom)
+
 }
 
 //Monom::TNode(const std::string& _monom)
@@ -261,7 +276,7 @@ Monom Monom::convert(const std::string & _monom)
    
   std::string new_monom;
   for (int i = 0; i < _monom.length(); i++)
-    if ((_monom[i] != ' ') && (_monom[i] != '*'))
+    if ((_monom[i] != ' ') && (_monom[i] != '*') && (_monom[i] != '+') && (_monom[i] != '-'))
       new_monom.push_back(_monom[i]);
   std::string coef;
   UINT x_degree = 0;
