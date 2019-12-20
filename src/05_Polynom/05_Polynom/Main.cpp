@@ -113,7 +113,48 @@ void _tListMain()
 
 //---------------------------------- Polynom -------------------------------//
 
+void _tListMain()
+{
+  try
+  {
+  std::cout << std::endl << "//-----------------------------//" << std::endl << std::endl;
 
+  TList<unsigned, double> _list1;
+  _list1.InsertEnd(100, 2);
+  _list1.InsertEnd(101, 11);
+  _list1.InsertEnd(128, -8);
+  Polynom tmp1(_list1);
+  std::cout << tmp1 << std::endl << std::endl;
+
+  TList<unsigned, double> _list2;
+  _list2.InsertEnd(103, 22);
+  _list2.InsertEnd(306, 78);
+  Polynom tmp2(_list2);
+  std::cout << tmp2 << std::endl << std::endl;
+
+  Polynom tmp3;
+  std::cin >> tmp3;
+  std::cout << tmp3;
+
+  std::cout << std::endl << (tmp1 + tmp2) << std::endl << std::endl;
+
+  Polynom tmp4;
+  std::cin >> tmp4;
+  std::cout << tmp4;
+
+
+  std::cout << std::endl << (tmp3 + tmp4) << std::endl << std::endl;
+
+  std::cout << std::endl << std::endl << "//-------------//" << std::endl;
+
+  }
+  catch (MyException const& e)
+  {
+    std::cout << "  " << e.what() << std::endl;
+    std::cout << "  errorLine: " << e.errorLine() << std::endl;
+    std::cout << "  errorFile: " << e.errorFile() << std::endl << std::endl;
+  }
+}
 
 //------------------------------------ Main ---------------------------------//
 
