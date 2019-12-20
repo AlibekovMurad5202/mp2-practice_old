@@ -283,8 +283,7 @@ TKey TList<TKey, TData>::getCurrentNodeKey() const
   if (pCurrent == nullptr)
   {
     throw ExceptionNoNodeInList(__LINE__, __FILE__);
-    //ExceptionEmptyList e(__LINE__, __FILE__);     //TODO: right name of exception
-    //throw e;
+
   }
   return pCurrent->key;
 }
@@ -295,8 +294,7 @@ TData TList<TKey, TData>::getCurrentNodeData() const
   if (pCurrent == nullptr)
   {
     throw ExceptionNoNodeInList(__LINE__, __FILE__);
-    //ExceptionEmptyList e(__LINE__, __FILE__);     //TODO: right name of exception
-    //throw e;
+
   }
   return pCurrent->data;
 }

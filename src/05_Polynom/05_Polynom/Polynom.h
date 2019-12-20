@@ -12,9 +12,6 @@ protected:
 
 public:
 
-  //TODO: 
-  //  void Sort();
-  //  Polynom(const std::string& _polynom);
 
   Polynom();
   Polynom(const TList<UINT, double>& _list);
@@ -108,7 +105,6 @@ Polynom Polynom::operator+(const Polynom& _polynom) const
       p1.monoms->Next();
     }
   }
-  //result.deleteZeros();    //TODO: method in Polynom : deleteZeros()
   return result;
 }
 
@@ -124,8 +120,8 @@ Polynom Polynom::operator+(const Monom& _monom) const
   UINT currentKey = result.monoms->getCurrentNodeKey();
   while ((currentKey < _monom.key) && (!result.monoms->IsEnded()))
   {
-    result.monoms->Next();
     currentKey = result.monoms->getCurrentNodeKey();
+    result.monoms->Next();
   }
   if (currentKey < _monom.key)
     result.monoms->InsertEnd(_monom.key, _monom.data);
@@ -139,7 +135,6 @@ Polynom Polynom::operator+(const Monom& _monom) const
   if (currentKey > _monom.key)
     result.monoms->InsertBefore(currentKey, _monom.key, _monom.data);
   result.monoms->Reset();
-  //result.deleteZeros();    //TODO: method in Polynom : deleteZeros()
   return result;
 }
 
@@ -166,7 +161,6 @@ Polynom Polynom::operator*(const Polynom & _polynom) const
     result = result + tmp;
     polynomial.monoms->Next();
   }
-  //result.deleteZeros();    //TODO: method in Polynom : deleteZeros()
   return result;
 }
 
@@ -203,17 +197,12 @@ std::istream& operator>>(std::istream& in, Polynom& _polynom)
   delete _polynom.monoms;
   _polynom.monoms = new TList<UINT, double>;
 
-  //Monom zero(000, 0);
-
   std::string line;
   std::getline(in, line);
-  std::string buffer;
+  //std::string buffer;
   int lengthOfExpression = line.length();
-  //if (lengthOfExpression == 0)
-  //{
-    _polynom = _polynom + (0);//+ 0.;//+ zero;
-    //return in;
-  //}
+  _polynom = _polynom + (0.);
+
 
   while (lengthOfExpression)
   {
@@ -241,32 +230,21 @@ std::istream& operator>>(std::istream& in, Polynom& _polynom)
           throw ExceptionWrongExpression(__LINE__, __FILE__);
         p = Prev::monom;
         start = i;
-        for (end = i; ((line[end] != '+') && (line[end] != '-') && (i < lengthOfExpression)); end++) 
-          std::cout << " " << end;
+        for (end = i; ((line[end] != '+') && (line[end] != '-') && (end < lengthOfExpression)); end++);
         break;
       }
       else throw ExceptionWrongExpression(__LINE__, __FILE__);
     }
-
-    s_monom = line.substr(start, end - start);
+    s_monom = line.substr(start, end - start + 1);
     _polynom = _polynom + Monom().convert(s_monom) * (44 - _sign);
+
+    if (lengthOfExpression - end <= 0)
+      break;
+
     line = line.substr(end + 1, lengthOfExpression - end);
     lengthOfExpression = line.length();
   }
-  //for (int i = 0; i < lengthOfExpression; i++)
-  //{
-  //  std::string s_monom;
-  //  //if (buffer.length() == 0)
-  //  //  continue;
-  //  if ();
-  //    
-  //  s_monom = line.substr(start, end - start + 1);
 
-  //  _polynom = _polynom + Monom().convert(s_monom) * (44 - _sign);
-  //  line = line.substr(end + 1, lengthOfExpression - end);
-  //  i = 0;
-  //  lengthOfExpression = line.length();
-  //}
   return in;
 }
 
