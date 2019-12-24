@@ -35,6 +35,7 @@ struct Monom
 
   char signOfCoefficient();
 
+  friend std::istream& operator>>(std::istream& in, Monom& _monom);
   friend std::ostream& operator<<(std::ostream& out, const Monom& _monom);
   static Monom convert(const std::string& _monom);
 };
@@ -231,14 +232,57 @@ Monom Monom::convert(const std::string & _monom)
   return Monom(key, data);
 }
 
+std::istream & operator>>(std::istream & in, Monom & _monom)
+{
+  std::string line;
+  std::getline(in, line);
+  int lengthOfExpression = int(line.length());
+
+  while (lengthOfExpression)
+  {
+    char _sign = '+';   // '+' ~ 43; '-' ~ 45
+    int start;
+    int end;
+    std::string s_monom;
+    enum Prev { sign, monom, other } p;
+    p = Prev::other;
+
+    for (int i = 0; i < lengthOfExpression; i++)
+    {
+      if (line[i] == ' ');
+      else if ((line[i] == '+') || (line[i] == '-'))
+      {
+        if (p == Prev::sign)
+          throw ExceptionWrongExpression(__LINE__, __FILE__);
+        p = Prev::sign;
+        _sign = line[i];
+      }
+      else if ((line[i] == 'x') || (line[i] == 'y') || (line[i] == 'z')
+        || (('0' <= line[i]) && (line[i] <= '9')))
+      {
+        if (p == Prev::monom)
+          throw ExceptionWrongExpression(__LINE__, __FILE__);
+        p = Prev::monom;
+        start = i;
+        for (end = i; ((line[end] != '+') && (line[end] != '-') && (end < lengthOfExpression)); end++);
+        break;
+      }
+      else throw ExceptionWrongExpression(__LINE__, __FILE__);
+    }
+    s_monom = line.substr(start, end - start + 1);
+    _monom = Monom().convert(s_monom) * (44 - _sign);
+
+    //if (lengthOfExpression - end <= 0)
+      break;
+  }
+
+  return in;
+}
+
 std::ostream& operator<<(std::ostream& out, const Monom& _monom)
 {
-  if (_monom.data > 0) out << " +";
-  else if (_monom.data < 0) out << " -";
-  else return out;
-
-  if ((_monom.key == 0) || (abs(_monom.data) != 1))
-    out << " " << abs(_monom.data);
+  if ((_monom.key == 0) || (_monom.data != 1))
+    out << " " << _monom.data;
 
   if (_monom.key / 100 == 1)
     out << (_monom.data != 1 ? " * x" : " x");

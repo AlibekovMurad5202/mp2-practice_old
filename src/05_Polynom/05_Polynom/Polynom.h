@@ -12,9 +12,9 @@ protected:
 
 public:
 
-
   Polynom();
   Polynom(const TList<UINT, double>& _list);
+  Polynom(const Monom& _monom);
   Polynom(const Polynom& _polynom);
   ~Polynom();
 
@@ -57,15 +57,12 @@ Polynom::Polynom(const TList<UINT, double>& _list)
   tmp_list->Reset();
   delete tmp_list;
 
-  //monoms = new TList<UINT, double>(_list);
-  //monoms->Reset();
-  //while (!monoms->IsEnded())
-  //{
-  //  if (monoms->getCurrentNodeKey() > MAX_KEY)
-  //    throw ExceptionMonomDoesNotExist(__LINE__, __FILE__);
-  //  monoms->Next();
-  //}
-  //monoms->Reset();
+}
+
+Polynom::Polynom(const Monom & _monom)
+{
+  monoms = new TList<UINT, double>();
+  monoms->InsertBegin(_monom.key, _monom.data);
 }
 
 Polynom::Polynom(const Polynom& _polynom)
@@ -198,6 +195,7 @@ Polynom Polynom::operator*(const Monom& _monom) const
   Polynom polynomial(*this);
   if (_monom.data == 0)
     return result;
+  polynomial.monoms->Reset();
   while (!polynomial.monoms->IsEnded())
   {
     Monom tmp(polynomial.monoms->getCurrentNodeKey(), polynomial.monoms->getCurrentNodeData());
@@ -247,7 +245,10 @@ std::ostream& operator<<(std::ostream& out, const Polynom& _polynom)
     _polynom.monoms->Next();
     while (!_polynom.monoms->IsEnded())
     {
-      out << Monom(_polynom.monoms->getCurrentNodeKey(), _polynom.monoms->getCurrentNodeData());
+      Monom tmp = Monom(_polynom.monoms->getCurrentNodeKey(), _polynom.monoms->getCurrentNodeData());
+      if (tmp.signOfCoefficient() > 0)
+        out << " +";
+      out << tmp;
       _polynom.monoms->Next();
     }
   }
