@@ -281,23 +281,27 @@ std::istream & operator>>(std::istream & in, Monom & _monom)
 
 std::ostream& operator<<(std::ostream& out, const Monom& _monom)
 {
-  if ((_monom.key == 0) || (_monom.data != 1))
-    out << " " << _monom.data;
+  //if ((_monom.key == 0) || (_monom.data != 1))
+    //out << " ";
+  if (_monom.data < 0)
+    out << " -";
+  if ((_monom.key == 0) || (abs(_monom.data) != 1))
+    out << " " << abs(_monom.data);
 
   if (_monom.key / 100 == 1)
-    out << (_monom.data != 1 ? " * x" : " x");
+    out << (abs(_monom.data) != 1 ? " * x" : " x");
   else if (_monom.key / 100 != 0)
-    out << (_monom.data != 1 ? " * x^" : " x^") << _monom.key / 100;
+    out << (abs(_monom.data) != 1 ? " * x^" : " x^") << _monom.key / 100;
 
   if ((_monom.key % 100) / 10 == 1)
-    out << (_monom.data != 1 || (_monom.key / 100) ? " * y" : " y");
+    out << (abs(_monom.data) != 1 || (_monom.key / 100) ? " * y" : " y");
   else if ((_monom.key % 100) / 10 != 0)
-    out << (_monom.data != 1 || (_monom.key / 100) ? " * y^" : " y^") << _monom.key % 100 / 10;
+    out << (abs(_monom.data) != 1 || (_monom.key / 100) ? " * y^" : " y^") << _monom.key % 100 / 10;
 
   if (_monom.key % 10 == 1)
-    out << (_monom.data != 1 || (_monom.key / 100) || ((_monom.key % 100) / 10) ? " * z" : " z");
+    out << (abs(_monom.data) != 1 || (_monom.key / 100) || ((_monom.key % 100) / 10) ? " * z" : " z");
   else if (_monom.key % 10 != 0)
-    out << (_monom.data != 1 || (_monom.key / 100) || ((_monom.key % 100) / 10) ? " * z^" : " z^") << _monom.key % 10;
+    out << (abs(_monom.data) != 1 || (_monom.key / 100) || ((_monom.key % 100) / 10) ? " * z^" : " z^") << _monom.key % 10;
 
   return out;
 };

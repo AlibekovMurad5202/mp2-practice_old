@@ -7,12 +7,15 @@
 
 class Polynom
 {
+private:
+  static Polynom convert(const std::string _expression);
+
 protected:
   TList<UINT, double> *monoms;
 
 public:
-
   Polynom();
+  Polynom(const std::string _expression);
   Polynom(const TList<UINT, double>& _list);
   Polynom(const Monom& _monom);
   Polynom(const Polynom& _polynom);
@@ -35,10 +38,67 @@ public:
 
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//
 
+Polynom Polynom::convert(const std::string _expression)
+{
+  std::string line = _expression;
+  Polynom result;
+  int lengthOfExpression = int(line.length());
+  result = result + (0.);
+
+  while (lengthOfExpression)
+  {
+    char _sign = '+';   // '+' ~ 43; '-' ~ 45
+    int start;
+    int end;
+    std::string s_monom;
+    enum Prev { sign, monom, other } p;
+    p = Prev::other;
+
+    for (int i = 0; i < lengthOfExpression; i++)
+    {
+      if (line[i] == ' ');
+      else if ((line[i] == '+') || (line[i] == '-'))
+      {
+        if (p == Prev::sign)
+          throw ExceptionWrongExpression(__LINE__, __FILE__);
+        p = Prev::sign;
+        _sign = line[i];
+      }
+      else if ((line[i] == 'x') || (line[i] == 'y') || (line[i] == 'z')
+        || (('0' <= line[i]) && (line[i] <= '9')))
+      {
+        if (p == Prev::monom)
+          throw ExceptionWrongExpression(__LINE__, __FILE__);
+        p = Prev::monom;
+        start = i;
+        end = i;
+        while((line[end] != '+') && (line[end] != '-') && (end < lengthOfExpression))
+          end++;
+        break;
+      }
+      else throw ExceptionWrongExpression(__LINE__, __FILE__);
+    }
+    s_monom = line.substr(start, end - start + 1);
+    result = result + Monom().convert(s_monom) * (44 - _sign);
+
+    if (lengthOfExpression - end <= 0)
+      break;
+
+    line = line.substr(end + 1, lengthOfExpression - end);
+    lengthOfExpression = int(line.length());
+  }
+  return result;
+}
+
 Polynom::Polynom()
 {
   monoms = new TList<UINT, double>;
   monoms->InsertBegin(0, .0);
+}
+
+Polynom::Polynom(const std::string _expression)
+{
+  *this = convert(_expression);
 }
 
 Polynom::Polynom(const TList<UINT, double>& _list)
@@ -56,7 +116,6 @@ Polynom::Polynom(const TList<UINT, double>& _list)
   }
   tmp_list->Reset();
   delete tmp_list;
-
 }
 
 Polynom::Polynom(const Monom & _monom)
@@ -136,7 +195,7 @@ Polynom Polynom::operator+(const Monom& _monom) const
   if (this->monoms->IsEmpty())
   {
     TList<UINT, double> tmp;
-    tmp.InsertBegin(0, .0);
+    tmp.InsertBegin(_monom.key, _monom.data);
     return Polynom(tmp);
   }
   Polynom result(*this);
@@ -199,7 +258,8 @@ Polynom Polynom::operator*(const Monom& _monom) const
   while (!polynomial.monoms->IsEnded())
   {
     Monom tmp(polynomial.monoms->getCurrentNodeKey(), polynomial.monoms->getCurrentNodeData());
-    result.monoms->InsertEnd(tmp * _monom);
+    result = result + (tmp * _monom);
+    polynomial.monoms->Next();
   }
   return result;
 }
@@ -228,25 +288,25 @@ std::ostream& operator<<(std::ostream& out, const Polynom& _polynom)
       out << abs(tmp.data);
 
     if (tmp.key / 100 == 1)
-      out << (tmp.data != 1 ? " * x" : " x");
+      out << (abs(tmp.data) != 1 ? " * x" : " x");
     else if (tmp.key / 100 != 0)
-      out << (tmp.data != 1 ? " * x^" : " x^") << tmp.key / 100;
+      out << (abs(tmp.data) != 1 ? " * x^" : " x^") << tmp.key / 100;
 
     if ((tmp.key % 100) / 10 == 1)
-      out << (tmp.data != 1 || (tmp.key / 100) ? " * y" : " y");
+      out << (abs(tmp.data) != 1 || (tmp.key / 100) ? " * y" : " y");
     else if ((tmp.key % 100) / 10 != 0)
-      out << (tmp.data != 1 || (tmp.key / 100) ? " * y^" : " y^") << tmp.key % 100 / 10;
+      out << (abs(tmp.data) != 1 || (tmp.key / 100) ? " * y^" : " y^") << tmp.key % 100 / 10;
 
     if (tmp.key % 10 == 1)
-      out << (tmp.data != 1 || (tmp.key / 100) || ((tmp.key % 100) / 10) ? " * z" : " z");
+      out << (abs(tmp.data) != 1 || (tmp.key / 100) || ((tmp.key % 100) / 10) ? " * z" : " z");
     else if (tmp.key % 10 != 0)
-      out << (tmp.data != 1 || (tmp.key / 100) || ((tmp.key % 100) / 10) ? " * z^" : " z^") << tmp.key % 10;
+      out << (abs(tmp.data) != 1 || (tmp.key / 100) || ((tmp.key % 100) / 10) ? " * z^" : " z^") << tmp.key % 10;
 
     _polynom.monoms->Next();
     while (!_polynom.monoms->IsEnded())
     {
       Monom tmp = Monom(_polynom.monoms->getCurrentNodeKey(), _polynom.monoms->getCurrentNodeData());
-      if (tmp.signOfCoefficient() > 0)
+      if (tmp.signOfCoefficient() == '+')
         out << " +";
       out << tmp;
       _polynom.monoms->Next();
@@ -262,50 +322,7 @@ std::istream& operator>>(std::istream& in, Polynom& _polynom)
 
   std::string line;
   std::getline(in, line);
-  int lengthOfExpression = int(line.length());
-  _polynom = _polynom + (0.);
-
-
-  while (lengthOfExpression)
-  {
-    char _sign = '+';   // '+' ~ 43; '-' ~ 45
-    int start;
-    int end;
-    std::string s_monom;
-    enum Prev { sign, monom, other } p;
-    p = Prev::other;
-
-    for (int i = 0; i < lengthOfExpression; i++)
-    {
-      if (line[i] == ' ');
-      else if ((line[i] == '+') || (line[i] == '-'))
-      {
-        if (p == Prev::sign)
-          throw ExceptionWrongExpression(__LINE__, __FILE__);
-        p = Prev::sign;
-        _sign = line[i];
-      }
-      else if ((line[i] == 'x') || (line[i] == 'y') || (line[i] == 'z')
-        || (('0' <= line[i]) && (line[i] <= '9')))
-      {
-        if (p == Prev::monom)
-          throw ExceptionWrongExpression(__LINE__, __FILE__);
-        p = Prev::monom;
-        start = i;
-        for (end = i; ((line[end] != '+') && (line[end] != '-') && (end < lengthOfExpression)); end++);
-        break;
-      }
-      else throw ExceptionWrongExpression(__LINE__, __FILE__);
-    }
-    s_monom = line.substr(start, end - start + 1);
-    _polynom = _polynom + Monom().convert(s_monom) * (44 - _sign);
-
-    if (lengthOfExpression - end <= 0)
-      break;
-
-    line = line.substr(end + 1, lengthOfExpression - end);
-    lengthOfExpression = int(line.length());
-  }
+  _polynom = Polynom::convert(line);
 
   return in;
 }
