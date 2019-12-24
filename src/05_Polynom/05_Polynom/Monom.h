@@ -33,6 +33,8 @@ struct Monom
   Monom operator-(const Monom& _monom);
   Monom operator*(const Monom& _monom);
 
+  char signOfCoefficient();
+
   friend std::ostream& operator<<(std::ostream& out, const Monom& _monom);
   static Monom convert(const std::string& _monom);
 };
@@ -40,7 +42,7 @@ struct Monom
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//
 
 Monom::TNode()
-  : pNext(nullptr), key(000), data(.0)
+  : pNext(nullptr), key(0), data(.0)
 {
 }
 
@@ -54,7 +56,7 @@ Monom::TNode(UINT _key, double _data)
 }
 
 Monom::TNode(double _data)
-  : key(000), data(_data), pNext(nullptr)
+  : key(0), data(_data), pNext(nullptr)
 {
 }
 
@@ -69,8 +71,8 @@ Monom::TNode(const Monom& _monom)
   }
   else
   {
-    key = 000;
-    data = 0;
+    key = 0;
+    data = .0;
     pNext = nullptr;
   }
 }
@@ -115,6 +117,15 @@ Monom Monom::operator*(const Monom& _monom)
   return Monom(key + _monom.key, data * _monom.data);
 }
 
+inline char Monom::signOfCoefficient()
+{
+  if (data > 0)
+    return '+';
+  if (data < 0)
+    return '-';
+  return 0;
+}
+
 Monom Monom::convert(const std::string & _monom)
 {
   UINT key;
@@ -157,12 +168,15 @@ Monom Monom::convert(const std::string & _monom)
             i += 2;
           }
         else throw ExceptionWrongExpression(__LINE__, __FILE__);
+      else if ((new_monom[i + 1] == 'y') || (new_monom[i + 1] == 'z') || (new_monom[i + 1] == 0))
+        if (x_degree + 1 > MAX_DEGREE)
+          throw ExceptionMonomDoesNotExist(__LINE__, __FILE__);
+        else x_degree++;
+      else if ((i + 1 >= new_monom.length()) || (new_monom[i + 1] == ' ')
+        || (new_monom[i + 1] == '+') || (new_monom[i + 1] == '*'))
+        x_degree++;
       else
-        if ((new_monom[i + 1] == 'y') || (new_monom[i + 1] == 'z'))
-          if (x_degree + 1 > MAX_DEGREE)
-            throw ExceptionMonomDoesNotExist(__LINE__, __FILE__);
-          else x_degree++;
-        else throw ExceptionMonomDoesNotExist(__LINE__, __FILE__);
+        throw ExceptionMonomDoesNotExist(__LINE__, __FILE__);
       break;
     }
     case 'y':
@@ -177,12 +191,14 @@ Monom Monom::convert(const std::string & _monom)
             i += 2;
           }
         else throw ExceptionWrongExpression(__LINE__, __FILE__);
-      else
-        if ((new_monom[i + 1] == 'x') || (new_monom[i + 1] == 'z') || (new_monom[i + 1] == 0))
-          if (y_degree + 1 > MAX_DEGREE)
-            throw ExceptionMonomDoesNotExist(__LINE__, __FILE__);
-          else y_degree++;
-        else throw ExceptionMonomDoesNotExist(__LINE__, __FILE__);
+      else if ((new_monom[i + 1] == 'x') || (new_monom[i + 1] == 'z') || (new_monom[i + 1] == 0))
+        if (y_degree + 1 > MAX_DEGREE)
+          throw ExceptionMonomDoesNotExist(__LINE__, __FILE__);
+        else y_degree++;
+      else if ((i + 1 >= new_monom.length()) || (new_monom[i + 1] == ' ')
+        || (new_monom[i + 1] == '+') || (new_monom[i + 1] == '*'))
+        y_degree++;
+      else throw ExceptionMonomDoesNotExist(__LINE__, __FILE__);
       break;
     }
     case 'z':
@@ -197,12 +213,14 @@ Monom Monom::convert(const std::string & _monom)
             i += 2;
           }
         else throw ExceptionWrongExpression(__LINE__, __FILE__);
-      else
-        if ((new_monom[i + 1] == 'x') || (new_monom[i + 1] == 'y'))
-          if (z_degree + 1 > MAX_DEGREE)
-            throw ExceptionMonomDoesNotExist(__LINE__, __FILE__);
-          else z_degree++;
-        else throw ExceptionMonomDoesNotExist(__LINE__, __FILE__);
+      else if ((new_monom[i + 1] == 'x') || (new_monom[i + 1] == 'y') || (new_monom[i + 1] == 0))
+        if (z_degree + 1 > MAX_DEGREE)
+          throw ExceptionMonomDoesNotExist(__LINE__, __FILE__);
+        else z_degree++;
+      else if ((i + 1 >= new_monom.length()) || (new_monom[i + 1] == ' ')
+        || (new_monom[i + 1] == '+') || (new_monom[i + 1] == '*'))
+        z_degree++;
+      else throw ExceptionMonomDoesNotExist(__LINE__, __FILE__);
       break;
     }
     default: throw ExceptionWrongExpression(__LINE__, __FILE__);
@@ -215,18 +233,28 @@ Monom Monom::convert(const std::string & _monom)
 
 std::ostream& operator<<(std::ostream& out, const Monom& _monom)
 {
-  if (_monom.data > 0) out << " + ";
-  else out << " - ";
+  if (_monom.data > 0) out << " +";
+  else if (_monom.data < 0) out << " -";
+  else return out;
+
   if ((_monom.key == 0) || (abs(_monom.data) != 1))
-    out << abs(_monom.data);
-  else
-    out << "1";
-  if (_monom.key / 100 != 0)
-    out << " * x^" << _monom.key / 100;
-  if ((_monom.key % 100) / 10 != 0)
-    out << " * y^" << _monom.key % 100 / 10;
-  if (_monom.key % 10 != 0)
-    out << " * z^" << _monom.key % 10;
+    out << " " << abs(_monom.data);
+
+  if (_monom.key / 100 == 1)
+    out << (_monom.data != 1 ? " * x" : " x");
+  else if (_monom.key / 100 != 0)
+    out << (_monom.data != 1 ? " * x^" : " x^") << _monom.key / 100;
+
+  if ((_monom.key % 100) / 10 == 1)
+    out << (_monom.data != 1 || (_monom.key / 100) ? " * y" : " y");
+  else if ((_monom.key % 100) / 10 != 0)
+    out << (_monom.data != 1 || (_monom.key / 100) ? " * y^" : " y^") << _monom.key % 100 / 10;
+
+  if (_monom.key % 10 == 1)
+    out << (_monom.data != 1 || (_monom.key / 100) || ((_monom.key % 100) / 10) ? " * z" : " z");
+  else if (_monom.key % 10 != 0)
+    out << (_monom.data != 1 || (_monom.key / 100) || ((_monom.key % 100) / 10) ? " * z^" : " z^") << _monom.key % 10;
+
   return out;
 };
 

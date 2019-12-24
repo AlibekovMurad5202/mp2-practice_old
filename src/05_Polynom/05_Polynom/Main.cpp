@@ -113,7 +113,7 @@ void _tListMain()
 
 //---------------------------------- Polynom -------------------------------//
 
-void _tListMain()
+void _tPolynomMain()
 {
   try
   {
@@ -121,8 +121,8 @@ void _tListMain()
 
   TList<unsigned, double> _list1;
   _list1.InsertEnd(100, 2);
-  _list1.InsertEnd(101, 11);
   _list1.InsertEnd(128, -8);
+  _list1.InsertEnd(101, 11);
   Polynom tmp1(_list1);
   std::cout << tmp1 << std::endl << std::endl;
 
@@ -132,20 +132,6 @@ void _tListMain()
   Polynom tmp2(_list2);
   std::cout << tmp2 << std::endl << std::endl;
 
-  Polynom tmp3;
-  std::cin >> tmp3;
-  std::cout << tmp3;
-
-  std::cout << std::endl << (tmp1 + tmp2) << std::endl << std::endl;
-
-  Polynom tmp4;
-  std::cin >> tmp4;
-  std::cout << tmp4;
-
-
-  std::cout << std::endl << (tmp3 + tmp4) << std::endl << std::endl;
-
-  std::cout << std::endl << std::endl << "//-------------//" << std::endl;
 
   }
   catch (MyException const& e)
@@ -161,9 +147,21 @@ void _tListMain()
 int main()
 {
   std::cout << "//~~~~~~~~~~~~~~~~~ Test of class \"TList\" ~~~~~~~~~~~~//" << std::endl << std::endl;
-  _tListMain();
+  _tPolynomMain();
 
   std::cout << "//~~~~~~~~~~~~~~~~ Test of class \"Polynom\" ~~~~~~~~~~~~//" << std::endl << std::endl;
+
+
+  std::cout << std::endl << std::endl << "//-------------//" << std::endl;
+  Polynom tmp3;
+  std::cin >> tmp3;
+  std::cout << std::endl << tmp3 << std::endl;
+  Polynom tmp4;
+  std::cin >> tmp4;
+  std::cout << std::endl << tmp4;
+  std::cout << std::endl << (tmp3 + tmp4) << std::endl << std::endl;
+  std::cout << std::endl << std::endl << "//-------------//" << std::endl;
+
   bool isItAll = false;
   do
   {

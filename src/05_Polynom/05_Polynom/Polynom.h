@@ -38,20 +38,34 @@ public:
 Polynom::Polynom()
 {
   monoms = new TList<UINT, double>;
-  monoms->InsertBegin(000, 0);
+  monoms->InsertBegin(0, .0);
 }
 
 Polynom::Polynom(const TList<UINT, double>& _list)
 {
-  monoms = new TList<UINT, double>(_list);
-  monoms->Reset();
-  while (!monoms->IsEnded())
+  monoms = new TList<UINT, double>();
+  monoms->InsertEnd(0, .0);
+  TList<UINT, double> *tmp_list = new TList<UINT, double>(_list);
+  tmp_list->Reset();
+  while (!tmp_list->IsEnded())
   {
-    if (monoms->getCurrentNodeKey() > MAX_KEY)
+    if (tmp_list->getCurrentNodeKey() > MAX_KEY)
       throw ExceptionMonomDoesNotExist(__LINE__, __FILE__);
-    monoms->Next();
+    *this = *this + Monom(tmp_list->getCurrentNodeKey(), tmp_list->getCurrentNodeData());
+    tmp_list->Next();
   }
-  monoms->Reset();
+  tmp_list->Reset();
+  delete tmp_list;
+
+  //monoms = new TList<UINT, double>(_list);
+  //monoms->Reset();
+  //while (!monoms->IsEnded())
+  //{
+  //  if (monoms->getCurrentNodeKey() > MAX_KEY)
+  //    throw ExceptionMonomDoesNotExist(__LINE__, __FILE__);
+  //  monoms->Next();
+  //}
+  //monoms->Reset();
 }
 
 Polynom::Polynom(const Polynom& _polynom)
@@ -76,35 +90,47 @@ Polynom Polynom::operator+(const Polynom& _polynom) const
   Polynom result;
   Polynom p1(*this);
   Polynom p2(_polynom);
-  p2.monoms->Reset();
   p1.monoms->Reset();
-  while (!p1.monoms->IsEnded() || !p2.monoms->IsEnded())
+  p2.monoms->Reset();
+  
+  while (!p1.monoms->IsEnded() && !p2.monoms->IsEnded())
   {
-    Monom m1;
-    Monom m2;
-    if (!p1.monoms->IsEnded())
-      m1 = Monom(p1.monoms->getCurrentNodeKey(), p1.monoms->getCurrentNodeData());
-    if (!p2.monoms->IsEnded())
-      m2 = Monom(p2.monoms->getCurrentNodeKey(), p2.monoms->getCurrentNodeData());
-    if (m1.key = m2.key)
+    Monom m1 = Monom(p1.monoms->getCurrentNodeKey(), p1.monoms->getCurrentNodeData());
+    Monom m2 = Monom(p2.monoms->getCurrentNodeKey(), p2.monoms->getCurrentNodeData());
+    if (m1.key == m2.key)
     {
       Monom sum = m1 + m2;
-      if (sum.data != 000)
-        result.monoms->InsertEnd(sum);
+      if (sum.data != 0)
+        result = result + sum;
       p1.monoms->Next();
       p2.monoms->Next();
     }
     else if (m1.key > m2.key)
     {
-      result.monoms->InsertEnd(m2);
+      result = result + m2;
       p2.monoms->Next();
     }
     else
     {
-      result.monoms->InsertEnd(m1);
+      result = result + m1;
       p1.monoms->Next();
     }
   }
+  
+  while (!p1.monoms->IsEnded())
+  {
+    Monom m1 = Monom(p1.monoms->getCurrentNodeKey(), p1.monoms->getCurrentNodeData());
+    result = result + m1;
+    p1.monoms->Next();
+  }
+
+  while (!p2.monoms->IsEnded())
+  {
+    Monom m2 = Monom(p2.monoms->getCurrentNodeKey(), p2.monoms->getCurrentNodeData());
+    result = result + m2;
+    p2.monoms->Next();
+  }
+
   return result;
 }
 
@@ -113,15 +139,17 @@ Polynom Polynom::operator+(const Monom& _monom) const
   if (this->monoms->IsEmpty())
   {
     TList<UINT, double> tmp;
-    tmp.InsertBegin(000, 0);
+    tmp.InsertBegin(0, .0);
     return Polynom(tmp);
   }
   Polynom result(*this);
+  result.monoms->Reset();
   UINT currentKey = result.monoms->getCurrentNodeKey();
   while ((currentKey < _monom.key) && (!result.monoms->IsEnded()))
   {
-    currentKey = result.monoms->getCurrentNodeKey();
     result.monoms->Next();
+    if (!result.monoms->IsEnded())
+      currentKey = result.monoms->getCurrentNodeKey();
   }
   if (currentKey < _monom.key)
     result.monoms->InsertEnd(_monom.key, _monom.data);
@@ -183,12 +211,46 @@ std::ostream& operator<<(std::ostream& out, const Polynom& _polynom)
   _polynom.monoms->Reset();
   if (_polynom.monoms->IsEmpty())
     out << " 0 ";
-  else 
+  else
+  {
+    if (_polynom.monoms->getCurrentNodeData() == 0)
+      _polynom.monoms->Next();
+    if (_polynom.monoms->IsEnded())
+    {
+      out << " 0 ";
+      return out;
+    }
+
+    Monom tmp(_polynom.monoms->getCurrentNodeKey(), _polynom.monoms->getCurrentNodeData());
+    out << " ";
+    if (tmp.signOfCoefficient() < 0)
+      out << "- ";
+
+    if ((tmp.key == 0) || (abs(tmp.data) != 1))
+      out << abs(tmp.data);
+
+    if (tmp.key / 100 == 1)
+      out << (tmp.data != 1 ? " * x" : " x");
+    else if (tmp.key / 100 != 0)
+      out << (tmp.data != 1 ? " * x^" : " x^") << tmp.key / 100;
+
+    if ((tmp.key % 100) / 10 == 1)
+      out << (tmp.data != 1 || (tmp.key / 100) ? " * y" : " y");
+    else if ((tmp.key % 100) / 10 != 0)
+      out << (tmp.data != 1 || (tmp.key / 100) ? " * y^" : " y^") << tmp.key % 100 / 10;
+
+    if (tmp.key % 10 == 1)
+      out << (tmp.data != 1 || (tmp.key / 100) || ((tmp.key % 100) / 10) ? " * z" : " z");
+    else if (tmp.key % 10 != 0)
+      out << (tmp.data != 1 || (tmp.key / 100) || ((tmp.key % 100) / 10) ? " * z^" : " z^") << tmp.key % 10;
+
+    _polynom.monoms->Next();
     while (!_polynom.monoms->IsEnded())
     {
       out << Monom(_polynom.monoms->getCurrentNodeKey(), _polynom.monoms->getCurrentNodeData());
       _polynom.monoms->Next();
     }
+  }
   return out;
 }
 
@@ -199,8 +261,7 @@ std::istream& operator>>(std::istream& in, Polynom& _polynom)
 
   std::string line;
   std::getline(in, line);
-  //std::string buffer;
-  int lengthOfExpression = line.length();
+  int lengthOfExpression = int(line.length());
   _polynom = _polynom + (0.);
 
 
@@ -242,7 +303,7 @@ std::istream& operator>>(std::istream& in, Polynom& _polynom)
       break;
 
     line = line.substr(end + 1, lengthOfExpression - end);
-    lengthOfExpression = line.length();
+    lengthOfExpression = int(line.length());
   }
 
   return in;
