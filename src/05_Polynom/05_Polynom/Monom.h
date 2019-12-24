@@ -37,6 +37,7 @@ struct Monom
 
   friend std::istream& operator>>(std::istream& in, Monom& _monom);
   friend std::ostream& operator<<(std::ostream& out, const Monom& _monom);
+
   static Monom convert(const std::string& _monom);
 };
 
@@ -65,10 +66,9 @@ Monom::TNode(const Monom& _monom)
 {
   if (&_monom != nullptr)
   {
-  key = _monom.key;
-  data = _monom.data;
-  pNext = nullptr;
-
+    key = _monom.key;
+    data = _monom.data;
+    pNext = nullptr;
   }
   else
   {
@@ -77,8 +77,6 @@ Monom::TNode(const Monom& _monom)
     pNext = nullptr;
   }
 }
-
-
 
 Monom::~TNode()
 {
@@ -271,9 +269,7 @@ std::istream & operator>>(std::istream & in, Monom & _monom)
     }
     s_monom = line.substr(start, end - start + 1);
     _monom = Monom().convert(s_monom) * (44 - _sign);
-
-    //if (lengthOfExpression - end <= 0)
-      break;
+    break;
   }
 
   return in;
@@ -281,8 +277,6 @@ std::istream & operator>>(std::istream & in, Monom & _monom)
 
 std::ostream& operator<<(std::ostream& out, const Monom& _monom)
 {
-  //if ((_monom.key == 0) || (_monom.data != 1))
-    //out << " ";
   if (_monom.data < 0)
     out << " -";
   if ((_monom.key == 0) || (abs(_monom.data) != 1))

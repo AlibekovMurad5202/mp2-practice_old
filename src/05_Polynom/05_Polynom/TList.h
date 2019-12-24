@@ -1,7 +1,6 @@
 #ifndef __TLIST_H__
 #define __TLIST_H__
 #include "MyExceptions.h"
-//#include "TNode.h"
 #include "Monom.h"
 
 //~~~~~~~~~~~~~~~~~~~~~~~~ class TList ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//
@@ -75,7 +74,6 @@ TList<TKey, TData>::TList(const TList& _tlist)
   pCurrent = pFirst;
   if (pFirst->pNext != nullptr)
     pNext = pFirst->pNext;
-
   }
 }
 
@@ -272,19 +270,14 @@ void TList<TKey, TData>::Next()
   pPrevious = pCurrent;
   pCurrent = pNext;
   if (pNext != nullptr)
-  {
     pNext = pNext->pNext;
-  }
 }
 
 template <typename TKey, typename TData>
 TKey TList<TKey, TData>::getCurrentNodeKey() const
 {
   if (pCurrent == nullptr)
-  {
     throw ExceptionNoNodeInList(__LINE__, __FILE__);
-
-  }
   return pCurrent->key;
 }
 
@@ -292,10 +285,7 @@ template <typename TKey, typename TData>
 TData TList<TKey, TData>::getCurrentNodeData() const
 {
   if (pCurrent == nullptr)
-  {
     throw ExceptionNoNodeInList(__LINE__, __FILE__);
-
-  }
   return pCurrent->data;
 }
 

@@ -123,18 +123,18 @@ void _tPolynomMain()
     std::cout << std::endl;
 
     std::cout << "Please, enter a monom." << std::endl;
-    Monom monom(210, 2);
-    //std::cin >> monom;
+    Monom monom;
+    std::cin >> monom;
     std::cout << "Monom: " << monom << std::endl << std::endl;
 
     std::cout << "Please, enter a polynom_1." << std::endl;
-    Polynom polynom_1("2+2x^2+y+z+7y^3");
-    //std::cin >> polynom_1;
+    Polynom polynom_1;
+    std::cin >> polynom_1;
     std::cout << "Polynom_1: " << polynom_1 << std::endl << std::endl;
 
     std::cout << "Please, enter a polynom_2." << std::endl;
-    Polynom polynom_2("2+2x+x+z^2+7x^3");
-    //std::cin >> polynom_2;
+    Polynom polynom_2;
+    std::cin >> polynom_2;
     std::cout << "Polynom_2: " << polynom_2 << std::endl << std::endl;
 
     std::cout << "Polynom_1 + Monom: " << std::endl;
@@ -172,6 +172,7 @@ void _tPolynomMain()
   }
 }
 
+
 //------------------------------------ Main ---------------------------------//
 
 int main()
@@ -185,6 +186,7 @@ int main()
   do
   {
     _tPolynomMain();
+
     std::cout << "Do you want to exit?" << std::endl;
     std::cout << "  1 - Yes     0 - No" << std::endl << std::endl;
     std::cin >> isItAll;

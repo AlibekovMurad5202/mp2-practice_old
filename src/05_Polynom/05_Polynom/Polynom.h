@@ -212,7 +212,7 @@ Polynom Polynom::operator+(const Monom& _monom) const
   if (currentKey == _monom.key)
   {
     double newData = result.monoms->getCurrentNodeData() + _monom.data;
-    if (newData != 0)
+    if (newData != 0.)
       result.monoms->InsertAfter(currentKey, _monom.key, newData);
     result.monoms->Remove(currentKey);
   }
@@ -258,7 +258,9 @@ Polynom Polynom::operator*(const Monom& _monom) const
   while (!polynomial.monoms->IsEnded())
   {
     Monom tmp(polynomial.monoms->getCurrentNodeKey(), polynomial.monoms->getCurrentNodeData());
-    result = result + (tmp * _monom);
+    tmp = tmp * _monom;
+    if (tmp.data != 0)
+      result = result + tmp;
     polynomial.monoms->Next();
   }
   return result;
@@ -281,11 +283,11 @@ std::ostream& operator<<(std::ostream& out, const Polynom& _polynom)
 
     Monom tmp(_polynom.monoms->getCurrentNodeKey(), _polynom.monoms->getCurrentNodeData());
     out << " ";
-    if (tmp.signOfCoefficient() < 0)
-      out << "- ";
+    if (tmp.signOfCoefficient() == '-')
+      out << "-";
 
     if ((tmp.key == 0) || (abs(tmp.data) != 1))
-      out << abs(tmp.data);
+      out << " " << abs(tmp.data);
 
     if (tmp.key / 100 == 1)
       out << (abs(tmp.data) != 1 ? " * x" : " x");
