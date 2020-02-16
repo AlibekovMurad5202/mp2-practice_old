@@ -31,7 +31,7 @@ void _tPolynomMain()
     std::cout << "  Polynom (or monom) can include " << std::endl;
     std::cout << "    * any real numbers (example: '2', '71.98')," << std::endl;
     std::cout << "    * operands 'x', 'y', 'z'," << std::endl;
-    std::cout << "    * mathematical symbols: "-", '+'(only for polynom), '^', '*'" << std::endl;
+    std::cout << "    * mathematical symbols: '-', '+'(only for polynom), '^', '*'" << std::endl;
     std::cout << std::endl;
     
     std::cout << "Please, enter a monom." << std::endl;
