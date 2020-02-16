@@ -115,11 +115,13 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="_tListMain.h" />
     <ClInclude Include="Monom.h" />
     <ClInclude Include="MyExceptions.h" />
     <ClInclude Include="Polynom.h" />
     <ClInclude Include="TList.h" />
     <ClInclude Include="TNode.h" />
+    <ClInclude Include="_tPolynomMain.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Main.cpp" />

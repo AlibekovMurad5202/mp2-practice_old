@@ -232,6 +232,8 @@ Monom Monom::convert(const std::string & _monom)
 
 std::istream & operator>>(std::istream & in, Monom & _monom)
 {
+  in.ignore(in.rdbuf()->in_avail());
+
   std::string line;
   std::getline(in, line);
   int lengthOfExpression = int(line.length());

@@ -48,43 +48,45 @@ Polynom Polynom::convert(const std::string _expression)
   while (lengthOfExpression)
   {
     char _sign = '+';   // '+' ~ 43; '-' ~ 45
-    int start;
-    int end;
+    int start_index;
+    int end_index;
     std::string s_monom;
-    enum Prev { sign, monom, other } p;
-    p = Prev::other;
+    enum Prev { sign, monom, other } prevElement;
+    prevElement = Prev::other;
 
     for (int i = 0; i < lengthOfExpression; i++)
     {
+      start_index = i;
+      end_index = i;
+
       if (line[i] == ' ');
       else if ((line[i] == '+') || (line[i] == '-'))
       {
-        if (p == Prev::sign)
+        if (prevElement == Prev::sign)
           throw ExceptionWrongExpression(__LINE__, __FILE__);
-        p = Prev::sign;
+        prevElement = Prev::sign;
         _sign = line[i];
       }
       else if ((line[i] == 'x') || (line[i] == 'y') || (line[i] == 'z')
         || (('0' <= line[i]) && (line[i] <= '9')))
       {
-        if (p == Prev::monom)
+        if (prevElement == Prev::monom)
           throw ExceptionWrongExpression(__LINE__, __FILE__);
-        p = Prev::monom;
-        start = i;
-        end = i;
-        while((line[end] != '+') && (line[end] != '-') && (end < lengthOfExpression))
-          end++;
+        prevElement = Prev::monom;
+        while((line[end_index] != '+') && (line[end_index] != '-') && (end_index < lengthOfExpression))
+          end_index++;
         break;
       }
       else throw ExceptionWrongExpression(__LINE__, __FILE__);
     }
-    s_monom = line.substr(start, end - start + 1);
+
+    s_monom = line.substr(start_index, end_index - start_index + 1);
     result = result + Monom().convert(s_monom) * (44 - _sign);
 
-    if (lengthOfExpression - end <= 0)
+    if (lengthOfExpression - end_index <= 0)
       break;
 
-    line = line.substr(end + 1, lengthOfExpression - end);
+    line = line.substr(end_index, lengthOfExpression - end_index);
     lengthOfExpression = int(line.length());
   }
   return result;
@@ -321,6 +323,8 @@ std::istream& operator>>(std::istream& in, Polynom& _polynom)
 {
   delete _polynom.monoms;
   _polynom.monoms = new TList<UINT, double>;
+
+  in.ignore(in.rdbuf()->in_avail());
 
   std::string line;
   std::getline(in, line);
