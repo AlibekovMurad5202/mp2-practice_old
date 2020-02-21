@@ -77,24 +77,6 @@ public:
   ~ExceptionListIsEnded();
 };
 
-class ExceptionFullStack : public MyException
-{
-public:
-  ExceptionFullStack();
-  ExceptionFullStack(const ExceptionFullStack& _exception);
-  ExceptionFullStack(int _line, const char* _file);
-  ~ExceptionFullStack();
-};
-
-class ExceptionEmptyStack : public MyException
-{
-public:
-  ExceptionEmptyStack();
-  ExceptionEmptyStack(const ExceptionEmptyStack& _exception);
-  ExceptionEmptyStack(int _line, const char* _file);
-  ~ExceptionEmptyStack();
-};
-
 class ExceptionEmptyList : public MyException
 {
 public:
@@ -103,7 +85,7 @@ public:
   ExceptionEmptyList(int _line, const char* _file);
   ~ExceptionEmptyList();
 };
-
+/*
 class ExceptionDivisionByZero : public MyException
 {
 public:
@@ -111,6 +93,6 @@ public:
   ExceptionDivisionByZero(const ExceptionDivisionByZero& _exception);
   ExceptionDivisionByZero(int _line, const char* _file);
   ~ExceptionDivisionByZero();
-};
+};*/
 
 #endif // !__MY_EXCEPTIONS_H__

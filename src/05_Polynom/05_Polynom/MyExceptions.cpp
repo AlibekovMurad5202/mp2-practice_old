@@ -160,32 +160,6 @@ ExceptionNotPositiveSize::~ExceptionNotPositiveSize()
   line = -1;
 }
 
-ExceptionFullStack::ExceptionFullStack()
-{
-  str_what = "Stack is full!";
-  line = -1;
-  file = 0;
-}
-
-ExceptionFullStack::ExceptionFullStack(const ExceptionFullStack& _exception)
-{
-  str_what = _exception.what();
-  line = _exception.errorLine();
-  file = _exception.errorFile();
-}
-
-ExceptionFullStack::ExceptionFullStack(int _line, const char* _file)
-{
-  str_what = "Stack is full!";
-  line = _line;
-  file = _file;
-}
-
-ExceptionFullStack::~ExceptionFullStack()
-{
-  line = -1;
-}
-
 ExceptionListIsEnded::ExceptionListIsEnded()
 {
   str_what = "List is ended!";
@@ -212,33 +186,6 @@ ExceptionListIsEnded::~ExceptionListIsEnded()
   line = -1;
 }
 
-ExceptionEmptyStack::ExceptionEmptyStack()
-{
-  str_what = "Stack is empty!";
-  line = -1;
-  file = 0;
-}
-
-ExceptionEmptyStack::ExceptionEmptyStack(const ExceptionEmptyStack& _exception)
-{
-  str_what = _exception.what();
-  line = _exception.errorLine();
-  file = _exception.errorFile();
-}
-
-ExceptionEmptyStack::ExceptionEmptyStack(int _line, const char* _file)
-{
-  str_what = "Stack is empty!";
-  line = _line;
-  file = _file;
-}
-
-ExceptionEmptyStack::~ExceptionEmptyStack()
-{
-  line = -1;
-}
-
-
 ExceptionEmptyList::ExceptionEmptyList()
 {
   str_what = "List is empty!";
@@ -263,8 +210,8 @@ ExceptionEmptyList::ExceptionEmptyList(int _line, const char* _file)
 ExceptionEmptyList::~ExceptionEmptyList()
 {
   line = -1;
-}
-
+};
+/*
 
 ExceptionDivisionByZero::ExceptionDivisionByZero()
 {
@@ -290,4 +237,4 @@ ExceptionDivisionByZero::ExceptionDivisionByZero(int _line, const char* _file)
 ExceptionDivisionByZero::~ExceptionDivisionByZero()
 {
   line = -1;
-};
+};*/
