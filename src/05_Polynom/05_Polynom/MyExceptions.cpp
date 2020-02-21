@@ -211,30 +211,3 @@ ExceptionEmptyList::~ExceptionEmptyList()
 {
   line = -1;
 };
-/*
-
-ExceptionDivisionByZero::ExceptionDivisionByZero()
-{
-  str_what = "Division by zero!";
-  line = -1;
-  file = 0;
-}
-
-ExceptionDivisionByZero::ExceptionDivisionByZero(const ExceptionDivisionByZero& _exception)
-{
-  str_what = _exception.what();
-  line = _exception.errorLine();
-  file = _exception.errorFile();
-}
-
-ExceptionDivisionByZero::ExceptionDivisionByZero(int _line, const char* _file)
-{
-  str_what = "Division by zero!";
-  line = _line;
-  file = _file;
-}
-
-ExceptionDivisionByZero::~ExceptionDivisionByZero()
-{
-  line = -1;
-};*/

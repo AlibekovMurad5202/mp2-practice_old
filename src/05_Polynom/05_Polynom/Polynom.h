@@ -138,6 +138,7 @@ Polynom::~Polynom()
 
 Polynom & Polynom::operator=(const Polynom& _polynom)
 {
+  // if (*this == _polynom) + operator==
   delete monoms;
   monoms = new TList<UINT, double>(*_polynom.monoms);
   return *this;
@@ -202,18 +203,31 @@ Polynom Polynom::operator+(const Monom& _monom) const
   }
   Polynom result(*this);
   result.monoms->Reset();
+
+  UINT currentKey;
+  do
+  {
+    currentKey = result.monoms->getCurrentNodeKey();
+    result.monoms->Next();
+
+  } while ((currentKey < _monom.key) && (!result.monoms->IsEnded()));
+  /*
   UINT currentKey = result.monoms->getCurrentNodeKey();
   while ((currentKey < _monom.key) && (!result.monoms->IsEnded()))
   {
     result.monoms->Next();
-    if (!result.monoms->IsEnded())
+    if (!result.monoms->IsEnded())//!!!! because Next()
       currentKey = result.monoms->getCurrentNodeKey();
-  }
+  }*/
+
   if (currentKey < _monom.key)
+  {
     result.monoms->InsertEnd(_monom.key, _monom.data);
+    return result;
+  }
   if (currentKey == _monom.key)
   {
-    double newData = result.monoms->getCurrentNodeData() + _monom.data;
+    double newData = result.monoms->getCurrentNodeData() + _monom.data; // change data
     if (newData != 0.)
       result.monoms->InsertAfter(currentKey, _monom.key, newData);
     result.monoms->Remove(currentKey);
@@ -226,7 +240,7 @@ Polynom Polynom::operator+(const Monom& _monom) const
 
 Polynom Polynom::operator-(const Polynom & _polynom) const
 {
-  return (Polynom(*this) + _polynom * (-1.));
+  return (Polynom(*this) + _polynom * (-1.)); // unary minus
 }
 
 Polynom Polynom::operator-(const Monom& _monom) const

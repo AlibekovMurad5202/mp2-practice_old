@@ -85,14 +85,5 @@ public:
   ExceptionEmptyList(int _line, const char* _file);
   ~ExceptionEmptyList();
 };
-/*
-class ExceptionDivisionByZero : public MyException
-{
-public:
-  ExceptionDivisionByZero();
-  ExceptionDivisionByZero(const ExceptionDivisionByZero& _exception);
-  ExceptionDivisionByZero(int _line, const char* _file);
-  ~ExceptionDivisionByZero();
-};*/
 
 #endif // !__MY_EXCEPTIONS_H__

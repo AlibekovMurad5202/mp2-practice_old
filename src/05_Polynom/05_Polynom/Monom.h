@@ -33,6 +33,8 @@ struct Monom
   Monom operator-(const Monom& _monom);
   Monom operator*(const Monom& _monom);
 
+  
+
   char signOfCoefficient();
 
   friend std::istream& operator>>(std::istream& in, Monom& _monom);
