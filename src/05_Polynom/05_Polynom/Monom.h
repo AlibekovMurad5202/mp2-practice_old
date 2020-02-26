@@ -33,7 +33,8 @@ struct Monom
   Monom operator-(const Monom& _monom);
   Monom operator*(const Monom& _monom);
 
-  
+  bool operator>(const Monom& _monom);
+  bool operator<(const Monom& _monom);
 
   char signOfCoefficient();
 
@@ -118,7 +119,21 @@ Monom Monom::operator*(const Monom& _monom)
   return Monom(key + _monom.key, data * _monom.data);
 }
 
-inline char Monom::signOfCoefficient()
+bool Monom::operator>(const Monom & _monom)
+{
+  if (key > _monom.key)
+    return true;
+  return false;
+}
+
+bool Monom::operator<(const Monom & _monom)
+{
+  if (key < _monom.key)
+    return true;
+  return false;
+}
+
+char Monom::signOfCoefficient()
 {
   if (data > 0)
     return '+';

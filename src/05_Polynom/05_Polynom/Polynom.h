@@ -22,6 +22,8 @@ public:
   ~Polynom();
 
   Polynom& operator=(const Polynom& _polynom);
+  bool operator==(const Polynom& _polynom);
+  Polynom operator-() const;
 
   Polynom operator+(const Polynom& _polynom) const;
   Polynom operator+(const Monom& _monom) const;
@@ -95,18 +97,17 @@ Polynom Polynom::convert(const std::string _expression)
 Polynom::Polynom()
 {
   monoms = new TList<UINT, double>;
-  monoms->InsertBegin(0, .0);
 }
 
 Polynom::Polynom(const std::string _expression)
 {
+  monoms = new TList<UINT, double>();
   *this = convert(_expression);
 }
 
 Polynom::Polynom(const TList<UINT, double>& _list)
 {
   monoms = new TList<UINT, double>();
-  monoms->InsertEnd(0, .0);
   TList<UINT, double> *tmp_list = new TList<UINT, double>(_list);
   tmp_list->Reset();
   while (!tmp_list->IsEnded())
@@ -138,10 +139,41 @@ Polynom::~Polynom()
 
 Polynom & Polynom::operator=(const Polynom& _polynom)
 {
-  // if (*this == _polynom) + operator==
+  if (*this == _polynom)
+    return *this;
   delete monoms;
   monoms = new TList<UINT, double>(*_polynom.monoms);
   return *this;
+}
+
+bool Polynom::operator==(const Polynom & _polynom)
+{
+  _polynom.monoms->Reset();
+  monoms->Reset();
+  while (!_polynom.monoms->IsEnded())
+  {
+    if (monoms->IsEnded() 
+      || (_polynom.monoms->getCurrentNodeKey() != monoms->getCurrentNodeKey())
+      || (_polynom.monoms->getCurrentNodeData() != monoms->getCurrentNodeData()))
+    {
+      monoms->Reset();
+      _polynom.monoms->Reset();
+      return false;
+    }
+    _polynom.monoms->Next();
+    monoms->Next();
+  }
+
+  if (!monoms->IsEnded())
+    return false;
+  monoms->Reset();
+  _polynom.monoms->Reset();
+  return true;
+}
+
+Polynom Polynom::operator-() const
+{
+  return (*this * (-1.));
 }
 
 Polynom Polynom::operator+(const Polynom& _polynom) const
@@ -164,7 +196,7 @@ Polynom Polynom::operator+(const Polynom& _polynom) const
       p1.monoms->Next();
       p2.monoms->Next();
     }
-    else if (m1.key > m2.key)
+    else if (m1 > m2)
     {
       result = result + m2;
       p2.monoms->Next();
@@ -195,52 +227,39 @@ Polynom Polynom::operator+(const Polynom& _polynom) const
 
 Polynom Polynom::operator+(const Monom& _monom) const
 {
-  if (this->monoms->IsEmpty())
+  Polynom result;
+  this->monoms->Reset();
+  bool _monomIsAdded = false;
+  while (!this->monoms->IsEnded())
   {
-    TList<UINT, double> tmp;
-    tmp.InsertBegin(_monom.key, _monom.data);
-    return Polynom(tmp);
+    Monom currentMonom(this->monoms->getCurrentNodeKey(), this->monoms->getCurrentNodeData());
+    if (currentMonom < _monom) result.monoms->InsertEnd(currentMonom);
+    else if (this->monoms->getCurrentNodeKey() == _monom.key)
+    {
+      Monom sumMonom(_monom.key, _monom.data + this->monoms->getCurrentNodeData());
+      if (sumMonom.data) result.monoms->InsertEnd(sumMonom);
+      _monomIsAdded = true;
+    }
+    else if (currentMonom > _monom)
+    {
+      if (_monomIsAdded) result.monoms->InsertEnd(currentMonom);
+      else
+      {
+        if (_monom.data) result.monoms->InsertEnd(_monom);
+        _monomIsAdded = true;
+        continue;
+      }
+    }
+    this->monoms->Next();
   }
-  Polynom result(*this);
-  result.monoms->Reset();
-
-  UINT currentKey;
-  do
-  {
-    currentKey = result.monoms->getCurrentNodeKey();
-    result.monoms->Next();
-
-  } while ((currentKey < _monom.key) && (!result.monoms->IsEnded()));
-  /*
-  UINT currentKey = result.monoms->getCurrentNodeKey();
-  while ((currentKey < _monom.key) && (!result.monoms->IsEnded()))
-  {
-    result.monoms->Next();
-    if (!result.monoms->IsEnded())//!!!! because Next()
-      currentKey = result.monoms->getCurrentNodeKey();
-  }*/
-
-  if (currentKey < _monom.key)
-  {
-    result.monoms->InsertEnd(_monom.key, _monom.data);
-    return result;
-  }
-  if (currentKey == _monom.key)
-  {
-    double newData = result.monoms->getCurrentNodeData() + _monom.data; // change data
-    if (newData != 0.)
-      result.monoms->InsertAfter(currentKey, _monom.key, newData);
-    result.monoms->Remove(currentKey);
-  }
-  if (currentKey > _monom.key)
-    result.monoms->InsertBefore(currentKey, _monom.key, _monom.data);
-  result.monoms->Reset();
+  if (!_monomIsAdded) result.monoms->InsertEnd(_monom);
+  this->monoms->Reset();
   return result;
 }
 
 Polynom Polynom::operator-(const Polynom & _polynom) const
 {
-  return (Polynom(*this) + _polynom * (-1.)); // unary minus
+  return (Polynom(*this) + (-_polynom));
 }
 
 Polynom Polynom::operator-(const Monom& _monom) const
@@ -320,6 +339,7 @@ std::ostream& operator<<(std::ostream& out, const Polynom& _polynom)
     else if (tmp.key % 10 != 0)
       out << (abs(tmp.data) != 1 || (tmp.key / 100) || ((tmp.key % 100) / 10) ? " * z^" : " z^") << tmp.key % 10;
 
+    Monom tmp2 = Monom(_polynom.monoms->getCurrentNodeKey(), _polynom.monoms->getCurrentNodeData());
     _polynom.monoms->Next();
     while (!_polynom.monoms->IsEnded())
     {

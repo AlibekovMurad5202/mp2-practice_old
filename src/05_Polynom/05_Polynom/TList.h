@@ -242,6 +242,8 @@ void TList<TKey, TData>::Remove(TKey _key)
 template <typename TKey, typename TData>
 void TList<TKey, TData>::Reset()
 {
+  if (pFirst == nullptr)
+    return;
   pCurrent = pFirst;
   pPrevious = nullptr;
   if (pFirst != nullptr)
