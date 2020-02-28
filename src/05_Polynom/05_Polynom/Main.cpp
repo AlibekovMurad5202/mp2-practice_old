@@ -14,8 +14,9 @@ int main()
 
     std::cout << "Do you want to exit? " << std::endl;
     std::cout << "  1 - Yes     0 - No" << std::endl << std::endl;
-    std::cin >> isItAll;
-    std::cin.ignore();
+    std::cin >> isItAll;//-2+5x^2y+z-yz+x^2yz
+    std::cin.ignore();//2+y-2z+x^2y
+    
   } while (!isItAll);
   system("pause");
   return 0;
