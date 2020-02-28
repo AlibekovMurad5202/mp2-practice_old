@@ -305,14 +305,14 @@ std::ostream& operator<<(std::ostream& out, const Polynom& _polynom)
 {
   _polynom.monoms->Reset();
   if (_polynom.monoms->IsEmpty())
-    out << " 0 ";
+    out << "  0 ";
   else
   {
     if (_polynom.monoms->getCurrentNodeData() == 0)
       _polynom.monoms->Next();
     if (_polynom.monoms->IsEnded())
     {
-      out << " 0 ";
+      out << "  0 ";
       return out;
     }
 
